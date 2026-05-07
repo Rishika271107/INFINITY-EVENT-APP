@@ -1,0 +1,305 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap");
+
+.auth-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  color: white;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+.auth-header {
+  text-align: center;
+}
+
+.login-header {
+  margin-top: 74px;
+  margin-bottom: 42px;
+}
+
+.signup-header {
+  margin-top: 22px;
+  margin-bottom: 42px;
+}
+
+.auth-subtitle {
+  font-family: "Cinzel", serif;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.auth-title {
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 800;
+  color: #d4af37;
+  background: linear-gradient(180deg, #f8de72 0%, #d4af37 45%, #9e721b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.auth-line {
+  width: 80px;
+  height: 2px;
+  margin: 18px auto 0;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.6);
+}
+
+.auth-card {
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 17px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48);
+}
+
+.login-card {
+  width: 430px;
+  min-height: 420px;
+  padding: 28px 30px 26px;
+}
+
+.signup-card {
+  width: 500px;
+  min-height: auto;
+  padding: 38px 40px 28px;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  margin-bottom: 11px;
+}
+
+.form-group input {
+  width: 100%;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #383838;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 20px;
+  padding: 0 26px;
+  font-family: "Inter", sans-serif;
+  transition: all 0.25s ease;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.47);
+}
+
+.form-group input:focus {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+.password-box {
+  width: 100%;
+  height: 48px;
+  position: relative;
+}
+
+.password-box input {
+  padding-right: 62px;
+}
+
+.eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 19px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.eye-btn:hover {
+  color: #d4af37;
+}
+
+.auth-submit-btn {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 999px;
+  margin-top: 2px;
+  background: linear-gradient(135deg, #bb9122 0%, #ebc84e 52%, #be9227 100%);
+  color: #080808;
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.42),
+    0 0 22px rgba(212, 175, 55, 0.14);
+  transition: all 0.3s ease;
+}
+
+.auth-submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(212, 175, 55, 0.28);
+}
+
+.switch-text {
+  margin-top: 25px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 16px;
+}
+
+.switch-text button {
+  border: none;
+  background: transparent;
+  color: #d4af37;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  padding: 0;
+}
+
+.switch-text button:hover {
+  text-decoration: underline;
+}
+
+.auth-back-btn {
+  margin-top: 35px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.52);
+  font-family: "Cinzel", serif;
+  font-size: 15px;
+  letter-spacing: 1.1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.auth-back-btn:hover {
+  color: #d4af37;
+}
+
+@media (max-width: 700px) {
+  .auth-page {
+    padding: 35px 18px;
+  }
+
+  .login-header,
+  .signup-header {
+    margin-top: 20px;
+    margin-bottom: 32px;
+  }
+
+  .auth-title {
+    font-size: 32px;
+  }
+
+  .auth-subtitle {
+    font-size: 12px;
+    letter-spacing: 6px;
+  }
+
+  .login-card,
+  .signup-card {
+    width: 100%;
+    min-height: auto;
+    padding: 32px 24px;
+  }
+
+  .form-group input,
+  .password-box {
+    height: 58px;
+  }
+
+  .auth-submit-btn {
+    height: 62px;
+    font-size: 16px;
+  }
+}
+
+.login-card .form-group label {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.login-card .form-group input {
+  font-size: 16px;
+  padding: 0 20px;
+}
+
+.login-card .auth-submit-btn {
+  font-size: 16px;
+  letter-spacing: 1.5px;
+}
+
+.login-card .switch-text {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.signup-card .form-group {
+  margin-bottom: 21px;
+}
+
+.signup-card .form-group label {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.signup-card .form-group input {
+  height: 55px;
+  font-size: 18px;
+  padding: 0 22px;
+}
+
+.signup-card .password-box {
+  height: 55px;
+}
+
+.signup-card .auth-submit-btn {
+  height: 62px;
+  font-size: 17px;
+  letter-spacing: 1.6px;
+  margin-top: 4px;
+}
+
+.signup-card .switch-text {
+  margin-top: 22px;
+  font-size: 15px;
+}
+
+.signup-card .switch-text button {
+  font-size: 15px;
+}
