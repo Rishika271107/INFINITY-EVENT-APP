@@ -1,0 +1,270 @@
+.menu-page {
+  min-height: 100vh;
+  background: #000;
+  color: white;
+  display: flex;
+  gap: 30px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* LEFT SIDE */
+
+.menu-left {
+  flex: 3;
+}
+
+.menu-title {
+  font-size: 38px;
+  color: #d4af37;
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+.menu-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.menu-tab {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 30px;
+  background: #111;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menu-tab:hover {
+  background: #1f1f1f;
+}
+
+.active-tab {
+  background: linear-gradient(
+    to right,
+    #d4af37,
+    #f4d03f
+  );
+  color: black;
+  font-weight: bold;
+}
+
+/* FOOD GRID */
+
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(240px, 1fr)
+  );
+  gap: 25px;
+}
+
+/* FOOD CARD */
+
+.food-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 28px 22px;
+  transition: 0.3s ease;
+  text-align: center;
+}
+
+.food-card:hover {
+  transform: translateY(-6px);
+  border-color: #d4af37;
+}
+
+.food-icon {
+  width: 75px;
+  height: 75px;
+  margin: auto;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+}
+
+.food-card h3 {
+  color: #d4af37;
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.food-card p {
+  color: #cfcfcf;
+  margin-bottom: 22px;
+  font-size: 16px;
+}
+
+/* ADD BUTTON */
+
+.add-cart-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 35px;
+  background: linear-gradient(
+    to right,
+    #d4af37,
+    #f4d03f
+  );
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-cart-btn:hover {
+  transform: scale(1.03);
+}
+
+/* QUANTITY BOX */
+
+.quantity-box {
+  width: 100%;
+  height: 50px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.quantity-box button {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: #d4af37;
+  color: black;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.quantity-box button:hover {
+  transform: scale(1.05);
+}
+
+.quantity-box span {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* CART PANEL */
+
+.cart-panel {
+  flex: 1;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 25px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.cart-panel h2 {
+  color: #d4af37;
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+.empty-cart {
+  color: #999;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 18px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #222;
+}
+
+.cart-item h4 {
+  color: white;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.cart-item p {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  color: white;
+}
+
+.final-total {
+  color: #d4af37;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* CHECKOUT BUTTON */
+
+.checkout-btn {
+  width: 100%;
+  margin-top: 28px;
+  padding: 14px;
+  border: none;
+  border-radius: 35px;
+  background: linear-gradient(
+    to right,
+    #d4af37,
+    #f4d03f
+  );
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.checkout-btn:hover {
+  transform: scale(1.03);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+  .menu-page {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .cart-panel {
+    position: relative;
+    top: 0;
+  }
+
+  .menu-title {
+    font-size: 30px;
+  }
+}

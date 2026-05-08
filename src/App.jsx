@@ -12,6 +12,17 @@ import PastActivities from "./pages/PastActivities";
 import ProfilePage from "./pages/ProfilePage";
 import ReminderPage from "./pages/ReminderPage";
 
+import FoodSupplyHotels from "./pages/FoodSupplyHotels";
+import FoodMenuPage from "./pages/FoodMenuPage";
+import FoodCheckout from "./pages/FoodCheckout";
+
+import VenueDetails from "./pages/VenueDetails";
+import VenueSelection from "./pages/VenueSelection";
+import VenueConfirm from "./pages/VenueConfirm";
+
+import FashionDesigning from "./pages/FashionDesigning";
+import FashionConfirm from "./pages/FashionConfirm";
+
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +47,18 @@ function App() {
 
         {/* Reminder */}
         <Route path="/user/reminder" element={<ReminderPage />} />
+
+        <Route path="/food-supply" element={<FoodSupplyHotels />} />
+
+        <Route path="/food-supply/menu/:id" element={<FoodMenuPage />}/>
+        <Route path="/food-supply/checkout" element={<FoodCheckout />}/>
+
+        <Route path="/venues/details" element={<VenueDetails />} />
+        <Route path="/venues/select" element={<VenueSelection />} />
+        <Route path="/venues/confirm" element={<VenueConfirm />} />
+
+        <Route path="/fashion-designing" element={<FashionDesigning />} />
+        <Route path="/fashion/confirm" element={<FashionConfirm />} />  
 
       </Routes>
     </BrowserRouter>

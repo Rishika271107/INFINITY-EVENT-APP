@@ -1,0 +1,150 @@
+.checkout-page {
+  min-height: 100vh;
+  background: #000;
+  color: white;
+  display: flex;
+  gap: 35px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* FORM SECTION */
+
+.checkout-form {
+  flex: 2;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 28px;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.checkout-form h1 {
+  color: #d4af37;
+  font-size: 38px;
+  margin-bottom: 10px;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid #2d2d2d;
+  background: #1a1a1a;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s ease;
+  box-sizing: border-box;
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus {
+  border-color: #d4af37;
+}
+
+.checkout-form textarea {
+  resize: none;
+  min-height: 120px;
+}
+
+/* SUMMARY CARD */
+
+.summary-card {
+  flex: 1;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 28px;
+  padding: 32px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.summary-card h2 {
+  color: #d4af37;
+  font-size: 30px;
+  margin-bottom: 28px;
+}
+
+/* SUMMARY DETAILS */
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #d0d0d0;
+  font-size: 16px;
+}
+
+.summary-row span {
+  font-weight: 600;
+}
+
+.total-row {
+  margin-top: 12px;
+  color: #d4af37;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.total-row span {
+  color: #d4af37;
+  font-size: 24px;
+}
+
+.summary-card hr {
+  border: 0.5px solid #2b2b2b;
+  margin: 10px 0;
+}
+
+/* BUTTON */
+
+.summary-card button {
+  width: 100%;
+  margin-top: 35px;
+  padding: 16px;
+  border: none;
+  border-radius: 35px;
+  background: linear-gradient(
+    to right,
+    #d4af37,
+    #f4d03f
+  );
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.summary-card button:hover {
+  transform: scale(1.03);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+  .checkout-page {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .summary-card {
+    position: relative;
+    top: 0;
+  }
+
+  .checkout-form h1 {
+    font-size: 30px;
+  }
+}

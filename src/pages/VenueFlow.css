@@ -1,0 +1,373 @@
+:root {
+  --bg: #050505;
+  --bg-soft: #0a0a0a;
+  --panel: #151515;
+  --panel-2: #1d1d1d;
+  --text: #f1ece2;
+  --muted: #b0a89a;
+  --gold: #cfa22a;
+  --gold-bright: #f1c85a;
+  --stroke: #2f2a22;
+}
+
+.venue-flow-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 0%, #111111 0%, #080808 38%, #050505 100%);
+  color: var(--text);
+}
+
+.venue-flow-container {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.step {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  background: #1f232d;
+  color: #848992;
+  border: 1px solid #2e333f;
+}
+.step.active,
+.step.done {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+  color: #111;
+  border: none;
+}
+.line {
+  width: 62px;
+  height: 2px;
+  background: #2e333f;
+}
+.line.active {
+  background: linear-gradient(90deg, var(--gold-bright), var(--gold));
+}
+
+.venue-title {
+  text-transform: uppercase;
+  font-size: 44px;
+  letter-spacing: 1px;
+  margin: 0 0 22px;
+  color: var(--gold);
+}
+
+.sub-title {
+  margin-top: -12px;
+  margin-bottom: 18px;
+  color: #c4b68a;
+  letter-spacing: 0.4px;
+}
+
+.venue-card {
+  background: linear-gradient(180deg, #14171f, #11131a);
+  border: 1px solid #232835;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 18px;
+  max-width: 760px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.9px;
+  color: #9f9aa0;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 46px;
+  background: #2b2d33;
+  border: 1px solid #3a3e48;
+  color: #ece7dc;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 16px;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #cba640;
+  box-shadow: 0 0 0 2px rgba(214, 168, 43, 0.2);
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.chip-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chip {
+  min-width: 64px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid #414552;
+  background: #1f232b;
+  color: #ddd9ce;
+  cursor: pointer;
+}
+.chip.selected {
+  border-color: #d2a22f;
+  color: #0d0f14;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+}
+
+.gold-btn {
+  margin-top: 8px;
+  width: fit-content;
+  min-width: 170px;
+  height: 50px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+  color: #191919;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+}
+.full-btn {
+  width: 100%;
+}
+
+.venues-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.venue-item {
+  background: linear-gradient(180deg, #14171f, #10131a);
+  border: 1px solid #232835;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 138px;
+}
+
+.hotel-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #232731;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+}
+
+.venue-meta h3 {
+  margin: 0 0 4px;
+  font-size: 27px;
+  line-height: 1.1;
+}
+.venue-meta p {
+  margin: 3px 0;
+  color: #b4b0a8;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.rating {
+  color: #f0c649 !important;
+}
+.price {
+  margin-top: 10px !important;
+  color: #f0c649 !important;
+  font-weight: 700;
+  font-size: 24px;
+}
+.price span {
+  color: #b7a566;
+  font-size: 16px;
+  margin-left: 4px;
+}
+
+.gold-outline-btn {
+  height: 42px;
+  min-width: 128px;
+  border-radius: 999px;
+  border: 1px solid #4f4122;
+  background: #1b1d24;
+  color: #d6a82b;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 22px;
+  align-items: start;
+}
+
+.summary-card {
+  border-radius: 14px;
+  background: linear-gradient(180deg, #14171f, #0f131a);
+  border: 1px solid #3a311f;
+  padding: 20px;
+  box-shadow: 0 0 35px rgba(214, 168, 43, 0.14);
+}
+.summary-card h3 {
+  margin: 2px 0 14px;
+  color: #efe7d0;
+  font-size: 25px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  color: #beb8ab;
+}
+.summary-row.total {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #2f3240;
+  color: var(--gold);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.back-link {
+  border: none;
+  background: transparent;
+  color: #8e95a4;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.empty-state {
+  margin: 20px 0;
+  color: #c6c2b8;
+}
+
+/* Success modal + confetti */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 6, 10, 0.78);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+.success-modal {
+  position: relative;
+  width: min(680px, 94vw);   /* bigger */
+  min-height: 320px;         /* taller */
+  border-radius: 20px;
+  padding: 36px 32px;
+  text-align: center;
+  justify-items: center;
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
+}
+
+.success-modal h2 {
+  margin: 0;
+  font-size: 44px;
+  color: var(--gold-bright);
+}
+
+.success-modal p {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: #e6dece;
+}
+
+.confetti-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.confetti {
+  position: absolute;
+  top: -24px;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  opacity: 0.95;
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Use random duration/delay in JSX inline style for natural feel */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(115vh) translateX(20px) rotate(900deg);
+  }
+}
+
+@media (max-width: 980px) {
+  .venues-grid,
+  .confirm-layout {
+    grid-template-columns: 1fr;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .venue-title {
+    font-size: 35px;
+  }
+  .venue-meta h3 {
+    font-size: 22px;
+  }
+  .price {
+    font-size: 20px;
+  }
+}
+
+.venue-card,
+.venue-item,
+.summary-card,
+.success-modal {
+  background: linear-gradient(180deg, #171717, #111111);
+  border: 1px solid #2c2c2c;
+}
+
+.field input,
+.field select {
+  background: #242424;
+  border: 1px solid #3a3a3a;
+  color: #f3eee3;
+}
+
+.success-modal .gold-btn {
+  margin: 8px auto 0;   /* center horizontally */
+  display: block;
+  min-width: 220px;     /* cleaner visual balance */
+  height: 52px;
+}
