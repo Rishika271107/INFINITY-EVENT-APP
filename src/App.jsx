@@ -25,6 +25,11 @@ import FashionConfirm from "./pages/FashionConfirm";
 import PhotographyDetails from "./pages/PhotographyDetails";
 import PhotographySelect from "./pages/PhotographySelect";
 import PhotographyConfirm from "./pages/PhotographyConfirm";
+import TouristPlaces from "./pages/TouristPlaces";
+import TouristHotels from "./pages/TouristHotels";
+import TouristConfirm from "./pages/TouristConfirm";
+import MakeupServices from "./pages/MakeupServices";
+import MakeupConfirm from "./pages/MakeupConfirm";
 
 
 import DecorationDetails from "./pages/DecorationDetails";
@@ -72,6 +77,11 @@ function App() {
         <Route path="/services/photography" element={<PhotographyDetails />} />
         <Route path="/services/photography/select" element={<PhotographySelect />} />
         <Route path="/services/photography/confirm" element={<PhotographyConfirm />} />
+        <Route path="/services/tourist" element={<TouristPlaces />} />
+        <Route path="/services/tourist/hotels" element={<TouristHotels />} />
+        <Route path="/services/tourist/confirm" element={<TouristConfirm />} />
+        <Route path="/services/makeup" element={<MakeupServices />} />
+        <Route path="/services/makeup/confirm" element={<MakeupConfirm />} />
 
         <Route path="/services/decoration" element={<DecorationDetails />} />
         <Route path="/services/decoration/vendors" element={<DecorationVendors />} />

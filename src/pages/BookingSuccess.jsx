@@ -36,7 +36,7 @@ function BookingSuccess() {
           <p>Congratulations! Your booking has been successfully completed.</p>
 
           <button className="popup-btn" onClick={() => navigate("/user/dashboard")}>
-            OKAY
+            Thank You! 
           </button>
         </div>
       </div>

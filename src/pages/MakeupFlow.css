@@ -1,0 +1,328 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --makeup-text: #f2ede3;
+  --makeup-muted: #8f8a80;
+  --makeup-gold: #d4a62a;
+  --makeup-gold-bright: #f3cd62;
+}
+
+.makeup-page {
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 0%, #101010 0%, #080808 42%, #050505 100%);
+  color: var(--makeup-text);
+  font-family: "Inter", sans-serif;
+  padding: 30px 20px 44px;
+}
+
+.makeup-container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.makeup-back-btn {
+  border: none;
+  background: transparent;
+  color: #7f7a70;
+  margin-bottom: 18px;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+}
+
+.makeup-title {
+  margin: 0 0 8px;
+  color: var(--makeup-gold);
+  font-family: "Cinzel", serif;
+  font-size: 42px;
+  text-transform: uppercase;
+}
+
+.makeup-subtitle {
+  margin: 0 0 20px;
+  color: var(--makeup-muted);
+}
+
+.makeup-services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.makeup-service-card {
+  border-radius: 14px;
+  border: 1px solid #2f2f2f;
+  background: linear-gradient(180deg, #1b1b1b, #141414);
+  padding: 16px;
+}
+
+.makeup-service-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.makeup-service-top h3 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: 30px;
+}
+
+.makeup-service-top p {
+  margin: 0;
+  color: var(--makeup-gold-bright);
+  font-weight: 700;
+}
+
+.makeup-service-meta {
+  margin: 6px 0;
+  color: var(--makeup-muted);
+}
+
+.makeup-service-reviews {
+  margin: 6px 0 10px;
+  color: #6f6a60;
+  font-size: 14px;
+}
+
+.makeup-service-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.makeup-service-bottom strong {
+  color: var(--makeup-gold);
+  font-size: 30px;
+}
+
+.makeup-service-bottom strong span {
+  color: #a09068;
+  font-size: 14px;
+}
+
+.makeup-gold-btn {
+  min-width: 148px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--makeup-gold-bright), var(--makeup-gold));
+  color: #161616;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.makeup-small-btn {
+  min-width: 115px;
+  height: 36px;
+  font-size: 12px;
+}
+
+.makeup-confirm-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start; /* changed from stretch so summary card doesn't over-stretch */
+}
+
+.makeup-form-card {
+  background: linear-gradient(180deg, #181818, #121212);
+  border: 1px solid #2e2e2e;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.makeup-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.makeup-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #9f9584;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.7px;
+}
+
+.makeup-field input,
+.makeup-field select {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #383838;
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #2c2c2c;
+  color: #f0ebdf;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box; /* prevents overflow from padding */
+}
+
+.makeup-summary-card {
+  border-radius: 14px;
+  border: 1px solid #53431f;
+  background: linear-gradient(180deg, #1a1a1a, #131313);
+  padding: 24px;
+  box-shadow: 0 0 34px rgba(212, 166, 42, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky; /* keeps it in view while scrolling form */
+  top: 24px;
+}
+
+.makeup-summary-card h3 {
+  margin: 0 0 14px;
+  color: #f0e4c8;
+  font-family: "Cinzel", serif;
+  font-size: 20px;
+}
+
+.makeup-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 9px 0;
+  color: #b7b0a3;
+}
+
+.makeup-summary-row.total {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #2f2f2f;
+}
+
+.makeup-summary-row.total span,
+.makeup-summary-row.total strong {
+  color: var(--makeup-gold);
+  font-size: 30px; /* slightly reduced from 34px so it doesn't overflow on smaller screens */
+  font-weight: 700;
+}
+
+.makeup-full-btn {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* ─── Modal fixes ─── */
+
+.makeup-modal-backdrop {
+  position: fixed;
+  inset: 0;                    /* covers the full viewport */
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;         /* true vertical center */
+  justify-content: center;     /* true horizontal center */
+  z-index: 100;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.makeup-success-modal {
+  width: min(460px, 92vw);
+  border-radius: 28px;
+  border: 1px solid var(--makeup-gold);
+  background: linear-gradient(to bottom right, #181818, #232323);
+  display: flex;
+  flex-direction: column;
+  align-items: center;         /* horizontally centers all children */
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 48px 36px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(212, 166, 42, 0.12);
+  position: relative;          /* keeps it above confetti z-stack */
+  z-index: 101;
+}
+
+.makeup-popup-icon {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--makeup-gold-bright), var(--makeup-gold));
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+
+.makeup-success-modal h2 {
+  margin: 0;
+  color: var(--makeup-gold);
+  font-size: 36px;
+  font-family: "Cinzel", serif;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+
+.makeup-success-modal p {
+  margin: 0 0 8px;
+  color: #d0d0d0;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 320px;            /* prevents text from stretching edge to edge */
+}
+
+.makeup-modal-btn {
+  min-width: 180px;
+  height: 50px;
+}
+
+/* ─── Confetti — behind modal ─── */
+
+.makeup-confetti-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 99;                 /* one step below modal (100/101) so it never clips text */
+}
+
+.makeup-confetti {
+  position: absolute;
+  top: -24px;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  opacity: 0.95;
+  animation-name: makeupConfettiFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes makeupConfettiFall {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(115vh) translateX(20px) rotate(900deg);
+  }
+}
+
+.makeup-empty-text {
+  color: #cbc3b4;
+  margin: 8px 0 16px;
+}
+
+@media (max-width: 980px) {
+  .makeup-title {
+    font-size: 34px;
+  }
+
+  .makeup-services-grid,
+  .makeup-confirm-layout,
+  .makeup-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .makeup-summary-card {
+    position: static; /* remove sticky on mobile */
+  }
+}

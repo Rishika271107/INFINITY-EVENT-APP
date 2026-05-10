@@ -120,7 +120,7 @@ function UserDashboard() {
         title: "TOURIST PLACES",
         description: "Explore premium tourist place options",
         icon: <MapPin size={24} />,
-        path: "/tourist-places",
+        path: "/services/tourist",
       },
 
       {
@@ -128,7 +128,7 @@ function UserDashboard() {
         title: "MAKEUP",
         description: "Explore premium makeup options",
         icon: <Sparkles size={24} />,
-        path: "/makeup",
+        path: "/services/makeup",
       },
 
       {

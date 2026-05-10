@@ -158,7 +158,7 @@ export default function PhotographyConfirm() {
             <h2>Booking Confirmed!</h2>
             <p>Your photography booking has been confirmed successfully.</p>
             <button className="photo-gold-btn photo-modal-btn" type="button" onClick={() => navigate(DASHBOARD_PATH)}>
-              OKAY
+              Thank You!
             </button>
           </div>
         </div>

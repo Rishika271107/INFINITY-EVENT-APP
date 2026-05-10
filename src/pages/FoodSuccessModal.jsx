@@ -22,7 +22,7 @@ function FoodSuccessModal({ onClose }) {
         </p>
 
         <button className="popup-btn" onClick={onClose}>
-          OK
+          Thank You!
         </button>
       </div>
     </div>

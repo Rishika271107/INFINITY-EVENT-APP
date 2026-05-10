@@ -146,7 +146,7 @@ export default function FashionConfirm() {
             <h2>Booking Confirmed!</h2>
             <p>Your fashion booking is confirmed successfully.</p>
             <button className="gold-btn modal-btn" type="button" onClick={goDashboard}>
-              OKAY
+              Thank You!
             </button>
           </div>
         </div>
