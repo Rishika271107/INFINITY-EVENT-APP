@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   Calculator,
   History,
@@ -21,8 +22,11 @@ import "./UserDashboard.css";
 function UserDashboard() {
   const navigate = useNavigate();
 
-  // Keep ONE source of truth for dashboard path
   const DASHBOARD_PATH = "/user/dashboard";
+
+  // =========================
+  // SIDEBAR ITEMS
+  // =========================
 
   const sidebarItems = useMemo(
     () => [
@@ -32,18 +36,21 @@ function UserDashboard() {
         icon: <Calculator size={18} />,
         path: "/budget-tracker",
       },
+
       {
         id: "history",
         title: "Past Activities",
         icon: <History size={18} />,
         path: "/past-activities",
       },
+
       {
         id: "reminder",
         title: "Reminder",
         icon: <Bell size={18} />,
         path: "/user/reminder",
       },
+
       {
         id: "profile",
         title: "Profile",
@@ -54,6 +61,10 @@ function UserDashboard() {
     []
   );
 
+  // =========================
+  // SERVICES
+  // =========================
+
   const services = useMemo(
     () => [
       {
@@ -63,6 +74,7 @@ function UserDashboard() {
         icon: <Building2 size={24} />,
         path: "/venues/details",
       },
+
       {
         id: "food",
         title: "FOOD SUPPLY",
@@ -70,6 +82,7 @@ function UserDashboard() {
         icon: <UtensilsCrossed size={24} />,
         path: "/food-supply",
       },
+
       {
         id: "fashion",
         title: "FASHION DESIGNING",
@@ -77,20 +90,31 @@ function UserDashboard() {
         icon: <Shirt size={24} />,
         path: "/fashion-designing",
       },
+
+      // =========================
+      // DECORATION NAVIGATION
+      // =========================
+
       {
         id: "decoration",
         title: "DECORATION",
         description: "Explore premium decoration options",
         icon: <Flower2 size={24} />,
-        path: "/decoration-details",
+
+        // IMPORTANT
+        // This should match App.jsx route
+
+        path: "/services/decoration",
       },
+
       {
         id: "photography",
         title: "PHOTOGRAPHY",
         description: "Explore premium photography options",
         icon: <Camera size={24} />,
-        path: "/photography",
+        path: "/services/photography",
       },
+
       {
         id: "tourist",
         title: "TOURIST PLACES",
@@ -98,6 +122,7 @@ function UserDashboard() {
         icon: <MapPin size={24} />,
         path: "/tourist-places",
       },
+
       {
         id: "makeup",
         title: "MAKEUP",
@@ -105,6 +130,7 @@ function UserDashboard() {
         icon: <Sparkles size={24} />,
         path: "/makeup",
       },
+
       {
         id: "budget-service",
         title: "BUDGET TRACKER",
@@ -112,6 +138,7 @@ function UserDashboard() {
         icon: <Calculator size={24} />,
         path: "/budget-tracker",
       },
+
       {
         id: "ai",
         title: "AI HELP",
@@ -123,7 +150,13 @@ function UserDashboard() {
     []
   );
 
-  const handleNavigate = (path) => navigate(path);
+  // =========================
+  // NAVIGATION
+  // =========================
+
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
 
   const handleServiceKeyDown = (event, path) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -132,22 +165,37 @@ function UserDashboard() {
     }
   };
 
+  // =========================
+  // JSX
+  // =========================
+
   return (
     <div className="dashboard-page">
+
+      {/* ========================= */}
+      {/* SIDEBAR */}
+      {/* ========================= */}
+
       <aside className="dashboard-sidebar">
+
         <div
           className="sidebar-brand"
           role="button"
           tabIndex={0}
           onClick={() => handleNavigate(DASHBOARD_PATH)}
-          onKeyDown={(e) => handleServiceKeyDown(e, DASHBOARD_PATH)}
+          onKeyDown={(e) =>
+            handleServiceKeyDown(e, DASHBOARD_PATH)
+          }
           aria-label="Go to dashboard"
         >
           <h1>Infinity</h1>
           <p>Event Management</p>
         </div>
 
-        <nav className="sidebar-menu" aria-label="Sidebar menu">
+        <nav
+          className="sidebar-menu"
+          aria-label="Sidebar menu"
+        >
           {sidebarItems.map((item) => (
             <button
               key={item.id}
@@ -169,16 +217,30 @@ function UserDashboard() {
           <span>
             <LogOut size={18} />
           </span>
+
           Logout
         </button>
       </aside>
 
+      {/* ========================= */}
+      {/* MAIN */}
+      {/* ========================= */}
+
       <main className="dashboard-main">
+
+        {/* TOPBAR */}
+
         <header className="dashboard-topbar">
+
           <h2>Dashboard</h2>
 
           <div className="topbar-icons">
-            <button className="notification-btn" type="button" aria-label="Notifications">
+
+            <button
+              className="notification-btn"
+              type="button"
+              aria-label="Notifications"
+            >
               <Bell size={22} />
               <span />
             </button>
@@ -187,38 +249,70 @@ function UserDashboard() {
               className="profile-btn"
               type="button"
               aria-label="Profile"
-              onClick={() => handleNavigate("/user/profile")}
+              onClick={() =>
+                handleNavigate("/user/profile")
+              }
             >
               <UserCircle size={26} />
             </button>
+
           </div>
+
         </header>
 
+        {/* CONTENT */}
+
         <section className="dashboard-content">
+
           <div className="dashboard-heading">
+
             <h1>Explore Services</h1>
-            <p>Choose from our curated premium event management services</p>
+
+            <p>
+              Choose from our curated premium event
+              management services
+            </p>
+
           </div>
 
+          {/* SERVICES GRID */}
+
           <div className="dashboard-services-grid">
+
             {services.map((service) => (
+
               <div
                 key={service.id}
                 className="dashboard-service-card"
-                onClick={() => handleNavigate(service.path)}
-                onKeyDown={(e) => handleServiceKeyDown(e, service.path)}
+                onClick={() =>
+                  handleNavigate(service.path)
+                }
+                onKeyDown={(e) =>
+                  handleServiceKeyDown(e, service.path)
+                }
                 role="button"
                 tabIndex={0}
                 aria-label={`Open ${service.title}`}
               >
-                <div className="dashboard-service-icon">{service.icon}</div>
+
+                <div className="dashboard-service-icon">
+                  {service.icon}
+                </div>
+
                 <h3>{service.title}</h3>
+
                 <p>{service.description}</p>
+
               </div>
+
             ))}
+
           </div>
+
         </section>
+
       </main>
+
     </div>
   );
 }

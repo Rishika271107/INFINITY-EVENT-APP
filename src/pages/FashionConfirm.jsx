@@ -141,11 +141,12 @@ export default function FashionConfirm() {
       {success && (
         <div className="modal-backdrop">
           <ConfettiBurst />
-          <div className="success-modal">
-            <h2>Congratulations!</h2>
+          <div className="success-modal" role="dialog" aria-modal="true" aria-label="Booking confirmed">
+            <div className="popup-icon" aria-hidden="true">✓</div>
+            <h2>Booking Confirmed!</h2>
             <p>Your fashion booking is confirmed successfully.</p>
             <button className="gold-btn modal-btn" type="button" onClick={goDashboard}>
-              Go to Dashboard
+              OKAY
             </button>
           </div>
         </div>

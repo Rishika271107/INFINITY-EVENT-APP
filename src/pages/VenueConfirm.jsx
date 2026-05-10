@@ -163,18 +163,19 @@ export default function VenueConfirm() {
         </div>
       </div>
 
-      {success && (
-        <div className="modal-backdrop">
-          <ConfettiBurst />
-          <div className="success-modal">
-            <h2>Booking Successful!</h2>
-            <p>Your venue has been booked successfully.</p>
-            <button className="gold-btn" type="button" onClick={goToDashboard}>
-              Thank You!
-            </button>
-          </div>
-        </div>
-      )}
+  {success && (
+  <div className="modal-backdrop">
+    <ConfettiBurst />
+    <div className="success-modal" role="dialog" aria-modal="true" aria-label="Booking confirmed">
+      <div className="popup-icon" aria-hidden="true">✓</div>
+      <h2>Booking Confirmed!</h2>
+      <p>Your venue has been booked successfully.</p>
+      <button className="gold-btn modal-btn" type="button" onClick={goToDashboard}>
+        Thank You!
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }

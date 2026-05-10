@@ -5,14 +5,14 @@ import "./FoodSuccessModal.css";
 
 function FoodSuccessModal({ onClose }) {
   return (
-    <div className="success-overlay">
+    <div className="popup-overlay">
       <Confetti
         recycle={false}
         numberOfPieces={350}
       />
 
-      <div className="success-modal">
-        <div className="success-icon">✓</div>
+      <div className="success-popup">
+        <div className="popup-icon">✓</div>
 
         <h1>Booking Successful!</h1>
 
@@ -21,7 +21,7 @@ function FoodSuccessModal({ onClose }) {
           confirmed successfully.
         </p>
 
-        <button onClick={onClose}>
+        <button className="popup-btn" onClick={onClose}>
           OK
         </button>
       </div>

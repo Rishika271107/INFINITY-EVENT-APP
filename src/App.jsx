@@ -22,6 +22,15 @@ import VenueConfirm from "./pages/VenueConfirm";
 
 import FashionDesigning from "./pages/FashionDesigning";
 import FashionConfirm from "./pages/FashionConfirm";
+import PhotographyDetails from "./pages/PhotographyDetails";
+import PhotographySelect from "./pages/PhotographySelect";
+import PhotographyConfirm from "./pages/PhotographyConfirm";
+
+
+import DecorationDetails from "./pages/DecorationDetails";
+import DecorationVendors from "./pages/DecorationVendors";
+import DecorationBooking from "./pages/DecorationBooking";
+import BookingSuccess from "./pages/BookingSuccess";
 
 function App() {
   return (
@@ -60,6 +69,15 @@ function App() {
         <Route path="/fashion-designing" element={<FashionDesigning />} />
         <Route path="/fashion/confirm" element={<FashionConfirm />} />  
 
+        <Route path="/services/photography" element={<PhotographyDetails />} />
+        <Route path="/services/photography/select" element={<PhotographySelect />} />
+        <Route path="/services/photography/confirm" element={<PhotographyConfirm />} />
+
+        <Route path="/services/decoration" element={<DecorationDetails />} />
+        <Route path="/services/decoration/vendors" element={<DecorationVendors />} />
+        <Route path="/services/decoration/booking" element={<DecorationBooking />} />
+        
+        <Route path="/booking-success" element={<BookingSuccess />} />  
       </Routes>
     </BrowserRouter>
   );
