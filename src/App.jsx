@@ -5,6 +5,8 @@ import RoleSelection from "./pages/RoleSelection";
 import UserLogin from "./pages/UserLogin";
 import UserSignup from "./pages/UserSignup";
 import UserDashboard from "./pages/UserDashboard";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 import BudgetTracker from "./pages/BudgetTracker";
 import PastActivities from "./pages/PastActivities";
@@ -51,6 +53,10 @@ function App() {
         {/* Dashboard */}
         <Route path="/user/home" element={<UserDashboard />} />
         <Route path="/user/dashboard" element={<UserDashboard />} />
+
+        {/* Admin */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
         {/* Features */}
         <Route path="/budget-tracker" element={<BudgetTracker />} />
