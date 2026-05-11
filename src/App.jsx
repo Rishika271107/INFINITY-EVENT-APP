@@ -38,6 +38,7 @@ import DecorationDetails from "./pages/DecorationDetails";
 import DecorationVendors from "./pages/DecorationVendors";
 import DecorationBooking from "./pages/DecorationBooking";
 import BookingSuccess from "./pages/BookingSuccess";
+import AiHelp from "./pages/AiHelp";
 
 function App() {
   return (
@@ -94,6 +95,7 @@ function App() {
         <Route path="/services/decoration/booking" element={<DecorationBooking />} />
         
         <Route path="/booking-success" element={<BookingSuccess />} />  
+        <Route path="/ai-help" element={<AiHelp />} />
       </Routes>
     </BrowserRouter>
   );

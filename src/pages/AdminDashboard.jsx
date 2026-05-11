@@ -529,9 +529,9 @@ function OverviewSection({ bookings, setBookings, setActiveSection, navigate }) 
               <Settings size={20} />
               Settings
             </button>
-            <button className="qa-btn qa-user-dash" id="qa-user-dashboard" type="button" onClick={() => navigate("/user/dashboard")}>
-              <LayoutDashboard size={20} />
-              User Dashboard
+            <button className="qa-btn qa-ai-help" id="qa-ai-help" type="button" onClick={() => navigate("/ai-help")}>
+              <Sparkles size={20} />
+              AI Help (Tara)
             </button>
           </div>
           <div className="satisfaction-block">
@@ -733,4 +733,5 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
-//gygjnuhbuhb
+//gygjnuhb
+// hieeee 
