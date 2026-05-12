@@ -1,0 +1,150 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap");
+
+.role-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  overflow: hidden;
+}
+
+.role-content {
+  width: 100%;
+  text-align: center;
+  margin-top: -20px;
+}
+
+.role-subtitle {
+  font-family: "Cinzel", serif;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 22px;
+}
+
+.role-title {
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 800;
+  color: #d4af37;
+  background: linear-gradient(180deg, #f7dc72 0%, #d4af37 45%, #9e721b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 18px;
+}
+
+.role-line {
+  width: 115px;
+  height: 2px;
+  margin: 0 auto 58px;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.6);
+}
+
+.role-cards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 54px;
+}
+
+.role-card {
+  width: 300px;
+  height: 300px;
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.35s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-icon {
+  width: 82px;
+  height: 82px;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 26px;
+  position: relative;
+  z-index: 1;
+}
+
+.role-card h2 {
+  font-family: "Cinzel", serif;
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 27px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.role-card p {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 15px;
+  line-height: 1.45;
+  position: relative;
+  z-index: 1;
+}
+
+.back-home-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.52);
+  font-family: "Cinzel", serif;
+  font-size: 15px;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.back-home-btn:hover {
+  color: #d4af37;
+}
+
+@media (max-width: 900px) {
+  .role-page {
+    padding: 60px 20px;
+    overflow-y: auto;
+  }
+
+  .role-title {
+    font-size: 42px;
+  }
+
+  .role-subtitle {
+    font-size: 13px;
+    letter-spacing: 7px;
+  }
+
+  .role-cards {
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .role-card {
+    width: 100%;
+    max-width: 350px;
+    height: 300px;
+  }
+}

@@ -1,0 +1,252 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap");
+
+/* ─── PAGE ──────────────────────────────────────────── */
+.admin-auth-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  color: white;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* ─── HEADER ─────────────────────────────────────────── */
+.admin-auth-header {
+  text-align: center;
+  margin-top: 64px;
+  margin-bottom: 36px;
+}
+
+.admin-auth-subtitle {
+  font-family: "Cinzel", serif;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.admin-auth-title {
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 800;
+  background: linear-gradient(180deg, #f8de72 0%, #d4af37 45%, #9e721b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.admin-auth-line {
+  width: 80px;
+  height: 2px;
+  margin: 18px auto 0;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.6);
+}
+
+/* ─── CARD ───────────────────────────────────────────── */
+.admin-auth-card {
+  background: #1b1b1b;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 17px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.48),
+    0 0 40px rgba(212, 175, 55, 0.04);
+  width: 430px;
+  padding: 28px 30px 26px;
+}
+
+/* ─── SHIELD BADGE ───────────────────────────────────── */
+.admin-shield-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 22px;
+  color: #d4af37;
+}
+
+.admin-shield-badge svg {
+  flex-shrink: 0;
+}
+
+.admin-shield-badge span {
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(212, 175, 55, 0.85);
+}
+
+/* ─── FORM GROUPS ────────────────────────────────────── */
+.form-group {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #2a2a2a;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  padding: 0 20px;
+  font-family: "Inter", sans-serif;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.form-group input:focus {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+/* ─── PASSWORD BOX ───────────────────────────────────── */
+.password-box {
+  width: 100%;
+  height: 48px;
+  position: relative;
+}
+
+.password-box input {
+  padding-right: 54px;
+}
+
+.eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.eye-btn:hover {
+  color: #d4af37;
+}
+
+/* ─── SUBMIT BUTTON ──────────────────────────────────── */
+.admin-submit-btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 999px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #bb9122 0%, #ebc84e 52%, #be9227 100%);
+  color: #080808;
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.42),
+    0 0 22px rgba(212, 175, 55, 0.14);
+  transition: all 0.3s ease;
+}
+
+.admin-submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(212, 175, 55, 0.28);
+}
+
+/* ─── BACK NOTE ──────────────────────────────────────── */
+.admin-back-note {
+  margin-top: 18px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 14px;
+}
+
+.admin-back-note button {
+  border: none;
+  background: transparent;
+  color: #d4af37;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.admin-back-note button:hover {
+  text-decoration: underline;
+}
+
+/* ─── BACK BTN ───────────────────────────────────────── */
+.admin-auth-back-btn {
+  margin-top: 32px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: "Cinzel", serif;
+  font-size: 14px;
+  letter-spacing: 1.1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.admin-auth-back-btn:hover {
+  color: #d4af37;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 520px) {
+  .admin-auth-page {
+    padding: 30px 18px;
+  }
+
+  .admin-auth-header {
+    margin-top: 24px;
+    margin-bottom: 28px;
+  }
+
+  .admin-auth-title {
+    font-size: 30px;
+  }
+
+  .admin-auth-card {
+    width: 100%;
+    padding: 24px 20px;
+  }
+}

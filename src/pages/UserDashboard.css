@@ -1,0 +1,367 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap");
+
+.dashboard-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #070707;
+  color: white;
+  display: flex;
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+}
+
+/* LEFT SIDEBAR */
+.dashboard-sidebar {
+  width: 215px;
+  min-height: 100vh;
+  background: #121212;
+  border-right: 1px solid rgba(212, 175, 55, 0.18);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.sidebar-brand {
+  height: 105px;
+  padding: 28px 22px 20px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.sidebar-brand h1 {
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  color: #d4af37;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+
+.sidebar-brand p {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+  margin: 0;
+}
+
+.sidebar-menu {
+  padding: 22px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-link {
+  width: 100%;
+  height: 52px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+  font-size: 15px;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s ease;
+}
+
+.sidebar-link span {
+  color: rgba(255, 255, 255, 0.66);
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-link svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.sidebar-link:hover {
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.sidebar-link:hover span {
+  color: #d4af37;
+}
+
+.logout-link {
+  margin-top: auto;
+  margin-bottom: 22px;
+}
+
+/* MAIN AREA */
+.dashboard-main {
+  width: calc(100% - 215px);
+  margin-left: 215px;
+  min-height: 100vh;
+  background: #070707;
+}
+
+.dashboard-topbar {
+  height: 72px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 31px;
+  background: #101010;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dashboard-topbar h2 {
+  font-family: "Cinzel", serif;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 23px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.topbar-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notification-btn,
+.profile-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-btn {
+  position: relative;
+}
+
+.notification-btn span {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: #d4af37;
+  border-radius: 50%;
+  right: -1px;
+  top: -2px;
+}
+
+.profile-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.18);
+  color: #d4af37;
+}
+
+/* CONTENT */
+.dashboard-content {
+  padding: 24px 31px 38px;
+}
+
+.dashboard-heading {
+  margin-bottom: 22px;
+}
+
+.dashboard-heading h1 {
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  color: #d4af37;
+  background: linear-gradient(180deg, #f5d86b 0%, #d4af37 46%, #9d721c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 12px;
+}
+
+.dashboard-heading p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  margin: 0;
+}
+
+/* SERVICE CARDS */
+.dashboard-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.dashboard-service-card {
+  height: 155px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 20px 22px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.dashboard-service-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(212, 175, 55, 0.1),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dashboard-service-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.38),
+    0 0 18px rgba(212, 175, 55, 0.08);
+}
+
+.dashboard-service-card:hover::before {
+  opacity: 1;
+}
+
+.dashboard-service-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-service-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+.dashboard-service-card h3 {
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-service-card p {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .dashboard-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-sidebar {
+    width: 210px;
+  }
+
+  .dashboard-main {
+    width: calc(100% - 210px);
+    margin-left: 210px;
+  }
+
+  .sidebar-link {
+    font-size: 14px;
+    padding: 0 24px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard-page {
+    flex-direction: column;
+  }
+
+  .dashboard-sidebar {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .sidebar-brand {
+    height: auto;
+  }
+
+  .sidebar-menu {
+    padding: 12px 0;
+  }
+
+  .sidebar-link {
+    height: 48px;
+    padding: 0 24px;
+    font-size: 14px;
+  }
+
+  .logout-link {
+    margin-bottom: 12px;
+  }
+
+  .dashboard-main {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .dashboard-content {
+    padding: 24px 20px;
+  }
+
+  .dashboard-heading h1 {
+    font-size: 28px;
+  }
+
+  .dashboard-heading p {
+    font-size: 14px;
+  }
+
+  .dashboard-services-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dashboard-service-card {
+    height: 150px;
+    padding: 18px 20px;
+  }
+
+  .dashboard-service-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .dashboard-service-icon svg {
+    width: 21px;
+    height: 21px;
+  }
+}
