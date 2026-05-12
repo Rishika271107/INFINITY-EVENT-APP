@@ -5,20 +5,22 @@ import "./PhotographyFlow.css";
 const DASHBOARD_PATH = "/user/dashboard";
 
 function ConfettiBurst() {
-  const pieces = Array.from({ length: 80 });
+  const [pieces] = useState(() =>
+    Array.from({ length: 80 }).map((_, i) => ({
+      left: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 1.2}s`,
+      animationDuration: `${2.8 + Math.random() * 2.1}s`,
+      background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
+    }))
+  );
 
   return (
     <div className="photo-confetti-wrap" aria-hidden="true">
-      {pieces.map((_, i) => (
+      {pieces.map((piece, i) => (
         <span
           key={i}
           className="photo-confetti"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 1.2}s`,
-            animationDuration: `${2.8 + Math.random() * 2.1}s`,
-            background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
-          }}
+          style={piece}
         />
       ))}
     </div>
@@ -40,6 +42,11 @@ export default function PhotographyConfirm() {
   });
   const [success, setSuccess] = useState(false);
 
+  const total = useMemo(() => {
+    if (!selectedPhotographer) return 0;
+    return Number(selectedPhotographer.pricePerHr) * Number(form.hours || 0);
+  }, [selectedPhotographer, form.hours]);
+
   if (!selectedPhotographer) {
     return (
       <div className="photo-flow-page">
@@ -52,11 +59,6 @@ export default function PhotographyConfirm() {
       </div>
     );
   }
-
-  const total = useMemo(
-    () => Number(selectedPhotographer.pricePerHr) * Number(form.hours || 0),
-    [selectedPhotographer.pricePerHr, form.hours]
-  );
 
   const onChange = (e) => {
     const { name, value } = e.target;

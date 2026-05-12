@@ -1,24 +1,26 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./VenueFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard"; // keep this same as your Route path
 
 function ConfettiBurst() {
-  const pieces = Array.from({ length: 60 });
+  const [pieces] = useState(() =>
+    Array.from({ length: 60 }).map((_, i) => ({
+      left: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 1.2}s`,
+      animationDuration: `${2.8 + Math.random() * 2.2}s`,
+      background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
+    }))
+  );
 
   return (
     <div className="confetti-wrap" aria-hidden="true">
-      {pieces.map((_, i) => (
+      {pieces.map((piece, i) => (
         <span
           key={i}
           className="confetti"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 1.2}s`,
-            animationDuration: `${2.8 + Math.random() * 2.2}s`,
-            background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
-          }}
+          style={piece}
         />
       ))}
     </div>
@@ -42,6 +44,14 @@ export default function VenueConfirm() {
 
   const [success, setSuccess] = useState(false);
 
+  const total = useMemo(
+    () => {
+      if (!selectedVenue) return 0;
+      return Number(selectedVenue.price) * Number(form.duration || 1);
+    },
+    [selectedVenue, form.duration]
+  );
+
   if (!selectedVenue) {
     return (
       <div className="venue-flow-page">
@@ -58,11 +68,6 @@ export default function VenueConfirm() {
       </div>
     );
   }
-
-  const total = useMemo(
-    () => Number(selectedVenue.price) * Number(form.duration || 1),
-    [selectedVenue.price, form.duration]
-  );
 
   const onChange = (e) => {
     const { name, value } = e.target;

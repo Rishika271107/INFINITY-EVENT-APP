@@ -1,9 +1,8 @@
 import { useState } from "react";
 import {
-  CalendarCheck, Users, Store, TrendingUp, Settings,
-  CheckCircle2, XCircle, AlertCircle, Building2,
-  UtensilsCrossed, Camera, Flower2, Shirt, Sparkles, MapPin,
-  Mail, Phone, MapPinIcon, Save, Bell, Shield,
+  Users, Store, Settings,
+  Building2, UtensilsCrossed, Camera, Flower2, Shirt, Sparkles, MapPin,
+  Save, Bell, Shield,
 } from "lucide-react";
 
 function StatusBadge({ status }) {

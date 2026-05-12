@@ -1,23 +1,26 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./FashionFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard";
 
 function ConfettiBurst() {
-  const pieces = Array.from({ length: 70 });
+  const [pieces] = useState(() =>
+    Array.from({ length: 70 }).map((_, i) => ({
+      left: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 1.2}s`,
+      animationDuration: `${2.7 + Math.random() * 2.1}s`,
+      background: ["#f3cf72", "#d8ab2f", "#ffffff", "#f0c649"][i % 4],
+    }))
+  );
+
   return (
     <div className="confetti-wrap" aria-hidden="true">
-      {pieces.map((_, i) => (
+      {pieces.map((piece, i) => (
         <span
           key={i}
           className="confetti"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 1.2}s`,
-            animationDuration: `${2.7 + Math.random() * 2.1}s`,
-            background: ["#f3cf72", "#d8ab2f", "#ffffff", "#f0c649"][i % 4],
-          }}
+          style={piece}
         />
       ))}
     </div>
@@ -37,6 +40,11 @@ export default function FashionConfirm() {
 
   const [success, setSuccess] = useState(false);
 
+  const total = useMemo(() => {
+    if (!selectedDesigner) return 0;
+    return Number(selectedDesigner.pricePerHr) * Number(form.hours || 0);
+  }, [selectedDesigner, form.hours]);
+
   if (!selectedDesigner) {
     return (
       <div className="fashion-page">
@@ -49,11 +57,6 @@ export default function FashionConfirm() {
       </div>
     );
   }
-
-  const total = useMemo(
-    () => Number(selectedDesigner.pricePerHr) * Number(form.hours || 0),
-    [selectedDesigner.pricePerHr, form.hours]
-  );
 
   const onChange = (e) => {
     const { name, value } = e.target;

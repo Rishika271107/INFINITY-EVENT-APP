@@ -3,20 +3,22 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./TouristFlow.css";
 
 function ConfettiBurst() {
-  const pieces = Array.from({ length: 75 });
+  const [pieces] = useState(() =>
+    Array.from({ length: 75 }).map((_, i) => ({
+      left: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 1.2}s`,
+      animationDuration: `${2.7 + Math.random() * 2.1}s`,
+      background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
+    }))
+  );
 
   return (
     <div className="tourist-confetti-wrap" aria-hidden="true">
-      {pieces.map((_, i) => (
+      {pieces.map((piece, i) => (
         <span
           key={i}
           className="tourist-confetti"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 1.2}s`,
-            animationDuration: `${2.7 + Math.random() * 2.1}s`,
-            background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
-          }}
+          style={piece}
         />
       ))}
     </div>

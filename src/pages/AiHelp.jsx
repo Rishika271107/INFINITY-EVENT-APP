@@ -1,18 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Send, 
-  User, 
-  ArrowLeft, 
-  Sparkles, 
-  Palette, 
-  Shirt, 
-  Gem, 
-  Heart,
-  Clock,
-  DollarSign,
-  Info
-} from "lucide-react";
+import { Send, User, ArrowLeft, Palette, Shirt, Heart, DollarSign } from "lucide-react";
 import "./AiHelp.css";
 
 const AiHelp = () => {
