@@ -1,0 +1,143 @@
+:root {
+  --gold: #d4a62a;
+  --gold-hover: #f3c548;
+  --text-light: #d0d0d0;
+  --popup-bg-start: #121212;
+  --popup-bg-end: #1f1f1f;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-family: Georgia, serif;
+}
+
+/* PAGE */
+.booking-page {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+/* POPUP OVERLAY */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Confetti above overlay, no click blocking */
+canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+}
+/* POPUP CARD */
+.success-popup {
+  width: min(430px, 92vw);
+  background: linear-gradient(to bottom right, var(--popup-bg-start), var(--popup-bg-end));
+  border: 1px solid var(--gold);
+  border-radius: 28px;
+  padding: 40px 28px;
+  text-align: center;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  animation: popupAnimation 0.35s ease;
+}
+
+/* TICK ICON (matching requested style) */
+.popup-icon {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-size: 50px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.success-popup h1 {
+  color: var(--gold);
+  font-size: clamp(30px, 4.5vw, 38px);
+  margin: 0 0 14px;
+  line-height: 1.15;
+}
+
+.success-popup p {
+  color: var(--text-light);
+  font-size: clamp(15px, 2.2vw, 18px);
+  line-height: 1.6;
+  margin: 0 0 28px;
+}
+
+.popup-btn {
+  width: 180px;
+  height: 52px;
+  border: none;
+  border-radius: 30px;
+  background: var(--gold);
+  color: #000;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.popup-btn:hover {
+  transform: scale(1.05);
+  background: var(--gold-hover);
+}
+
+.popup-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ENTRY ANIMATION */
+@keyframes popupAnimation {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* MOBILE TUNING */
+@media (max-width: 480px) {
+  .success-popup {
+    padding: 32px 20px;
+    border-radius: 22px;
+  }
+
+  .popup-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 42px;
+  }
+
+  .popup-btn {
+    width: 160px;
+    height: 48px;
+    font-size: 16px;
+  }
+}
