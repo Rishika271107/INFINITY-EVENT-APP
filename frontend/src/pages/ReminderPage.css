@@ -1,0 +1,251 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap");
+
+.reminder-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #090909;
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  padding: 58px 0;
+}
+
+.reminder-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.reminder-back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  color: #9b9b9b;
+  font-family: "Cinzel", serif;
+  font-size: 15px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  margin-bottom: 42px;
+}
+
+.reminder-back:hover {
+  color: #d4af37;
+}
+
+.reminder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 52px;
+}
+
+.reminder-header h1 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: 38px;
+  color: #d4af37;
+  letter-spacing: 1px;
+}
+
+.reminder-header p {
+  margin-top: 12px;
+  font-size: 19px;
+  color: #999999;
+}
+
+.add-reminder-btn {
+  width: 138px;
+  height: 46px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #d4af37, #b88919);
+  color: #070707;
+  font-family: "Cinzel", serif;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.22);
+}
+
+.add-reminder-btn:hover {
+  transform: translateY(-2px);
+}
+
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reminder-card {
+  width: 100%;
+  min-height: 105px;
+  background: #1d1d1d;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 18px;
+  padding: 0 34px 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reminder-card:first-child {
+  background: #292929;
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 0 35px rgba(212, 175, 55, 0.09);
+}
+
+.reminder-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.bell-icon {
+  color: #d4af37;
+  flex-shrink: 0;
+}
+
+.reminder-card h3 {
+  margin: 0 0 8px 0;
+  font-family: "Cinzel", serif;
+  font-size: 19px;
+  color: #f1f1f1;
+}
+
+.reminder-card p {
+  margin: 0;
+  color: #9c9c9c;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: #8f8f8f;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #d4af37;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-card {
+  width: 430px;
+  background: #181818;
+  border: 1px solid rgba(212, 175, 55, 0.38);
+  border-radius: 22px;
+  padding: 34px;
+  position: relative;
+  box-shadow: 0 0 45px rgba(212, 175, 55, 0.15);
+}
+
+.popup-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.popup-close:hover {
+  color: #d4af37;
+}
+
+.popup-card h2 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  color: #d4af37;
+  font-size: 30px;
+}
+
+.popup-subtitle {
+  margin: 8px 0 28px;
+  color: #999;
+}
+
+.popup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-form label {
+  color: #d4af37;
+  font-family: "Cinzel", serif;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.popup-form input {
+  height: 46px;
+  background: #0d0d0d;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 12px;
+  color: #ffffff;
+  padding: 0 14px;
+  margin-bottom: 18px;
+  outline: none;
+  font-size: 15px;
+}
+
+.popup-form input:focus {
+  border-color: #d4af37;
+}
+
+.done-btn {
+  margin-top: 10px;
+  height: 48px;
+  border: none;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #d4af37, #b88919);
+  color: #080808;
+  font-family: "Cinzel", serif;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.done-btn:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .reminder-container {
+    max-width: 88%;
+  }
+
+  .reminder-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+  }
+
+  .reminder-card {
+    padding: 24px;
+  }
+
+  .popup-card {
+    width: 88%;
+  }
+}

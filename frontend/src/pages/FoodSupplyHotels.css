@@ -1,0 +1,99 @@
+.food-hotels-page {
+  min-height: 100vh;
+  background: #000;
+  padding: 40px;
+  color: white;
+}
+
+.food-title {
+  text-align: center;
+  font-size: 42px;
+  color: #d4af37;
+  margin-bottom: 45px;
+  font-weight: 700;
+}
+
+.hotel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.hotel-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 35px 25px;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.hotel-card:hover {
+  transform: translateY(-8px);
+  border-color: #d4af37;
+}
+
+.hotel-icon {
+  width: 85px;
+  height: 85px;
+  margin: auto;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4af37;
+  margin-bottom: 25px;
+}
+
+.hotel-content {
+  text-align: center;
+}
+
+.hotel-content h2 {
+  color: #d4af37;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.hotel-city,
+.hotel-rating,
+.hotel-price {
+  color: #d0d0d0;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.hotel-description {
+  color: #9d9d9d;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+
+.hotel-content button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 40px;
+  background: linear-gradient(to right, #d4af37, #f4d03f);
+  color: #000;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.hotel-content button:hover {
+  transform: scale(1.03);
+}
+
+@media (max-width: 768px) {
+  .food-hotels-page {
+    padding: 20px;
+  }
+
+  .food-title {
+    font-size: 32px;
+  }
+}

@@ -1,0 +1,271 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-family: Georgia, serif;
+}
+
+/* PAGE */
+
+.decoration-page {
+  min-height: 100vh;
+  background: black;
+  color: white;
+  padding-top: 30px;
+  padding-bottom: 40px;
+}
+
+/* CONTAINER */
+
+.decoration-container {
+  width: 85%;
+  margin: auto;
+}
+
+/* BACK BUTTON */
+
+.back-btn {
+  color: #d4a62a;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  color: #f5c542;
+}
+
+/* STEPPER */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1c1c1c;
+  border: 1px solid #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.step.active {
+  background: #d4a62a;
+  color: black;
+  border: none;
+}
+
+.line {
+  width: 90px;
+  height: 2px;
+  background: #333;
+}
+
+.active-line {
+  background: #d4a62a;
+}
+
+/* TITLE */
+
+.page-title {
+  color: #d4a62a;
+  font-size: 26px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* VENDOR GRID */
+
+.vendors-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* VENDOR CARD */
+
+.vendor-card {
+  background: linear-gradient(to bottom, #1a1a1a, #141414);
+  border: 1px solid #2d2d2d;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.vendor-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.vendor-card-top h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f2ede3;
+  font-family: Georgia, serif;
+}
+
+.vendor-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #d4a62a;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vendor-meta {
+  color: #888;
+  font-size: 13px;
+  margin: 2px 0 0;
+}
+
+.vendor-reviews {
+  color: #666;
+  font-size: 12px;
+  margin: 0;
+}
+
+.vendor-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.vendor-price {
+  color: #d4a62a;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.book-btn {
+  height: 36px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f3cd62, #d4a62a);
+  color: #161616;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.book-btn:hover {
+  opacity: 0.85;
+}
+
+/* FORM CARD */
+
+.form-card {
+  background: linear-gradient(to bottom right, #111, #1b1b1b);
+  border: 1px solid #2d2d2d;
+  border-radius: 16px;
+  width: 78%;
+  max-width: 980px;
+  padding: 24px;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+/* GRID */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+/* FORM GROUP */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  color: #d4a62a;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-bottom: 8px;
+}
+
+/* INPUTS */
+
+.form-group select,
+.form-group input {
+  height: 42px;
+  background: #2b2b2b;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  padding: 0 14px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: #d4a62a;
+  box-shadow: 0 0 8px rgba(212, 166, 42, 0.25);
+}
+
+/* BUTTON */
+
+.continue-btn {
+  margin-top: 24px;
+  width: 160px;
+  height: 44px;
+  border: none;
+  border-radius: 30px;
+  background: #d4a62a;
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.continue-btn:hover {
+  transform: scale(1.04);
+  background: #f0c040;
+}
+
+/* RESPONSIVE */
+
+@media screen and (max-width: 900px) {
+  .form-grid,
+  .vendors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .line {
+    width: 50px;
+  }
+}
