@@ -155,9 +155,9 @@ const AiHelp = () => {
           <span>Dashboard</span>
         </button>
         <div className="ai-title">
-          <div className="tara-avatar-header">T</div>
+          <div className="Zyra-avatar-header">T</div>
           <div className="title-text">
-            <h1>Tara</h1>
+            <h1>Zyra</h1>
             <p>Infinity AI Event Director</p>
           </div>
         </div>
