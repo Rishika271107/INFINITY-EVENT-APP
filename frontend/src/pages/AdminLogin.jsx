@@ -1,16 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import API from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import "./AdminLogin.css";
 
 function AdminLogin() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
-  // ─── SUBMIT ───────────────────────────────────────────────
-  const handleLogin = (e) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate("/admin/dashboard");
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await API.post("/auth/admin-login", formData);
+      if (response.data.success) {
+        login(response.data.token, response.data.user);
+        alert(response.data.message || "Admin login successful!");
+        navigate("/admin/dashboard");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Admin login failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // ─── JSX ──────────────────────────────────────────────────
@@ -26,6 +53,7 @@ function AdminLogin() {
 
       {/* ── FORM CARD ── */}
       <form className="admin-auth-card" onSubmit={handleLogin}>
+        {error && <p className="error-message" style={{ color: 'red', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
 
         {/* Badge */}
         <div className="admin-shield-badge">
@@ -37,21 +65,16 @@ function AdminLogin() {
           <span>Administrator Only</span>
         </div>
 
-        <div className="form-group">
-          <label>Admin ID</label>
-          <input
-            type="text"
-            placeholder="Enter your admin ID"
-            required
-            id="admin-id"
-          />
-        </div>
+
 
         <div className="form-group">
           <label>Email</label>
           <input
             type="email"
+            name="email"
             placeholder="admin@infinity.com"
+            value={formData.email}
+            onChange={handleChange}
             required
             id="admin-email"
           />
@@ -62,7 +85,10 @@ function AdminLogin() {
           <div className="password-box">
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="••••••••"
+              value={formData.password}
+              onChange={handleChange}
               required
               id="admin-password"
             />

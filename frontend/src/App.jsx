@@ -7,6 +7,7 @@ import UserSignup from "./pages/UserSignup";
 import UserDashboard from "./pages/UserDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import ForgotPassword from "./pages/ForgotPassword";
 
 import BudgetTracker from "./pages/BudgetTracker";
 import PastActivities from "./pages/PastActivities";
@@ -37,8 +38,10 @@ import MakeupConfirm from "./pages/MakeupConfirm";
 import DecorationDetails from "./pages/DecorationDetails";
 import DecorationVendors from "./pages/DecorationVendors";
 import DecorationBooking from "./pages/DecorationBooking";
+import OTPVerification from "./pages/OTPVerification";
 import BookingSuccess from "./pages/BookingSuccess";
 import AiHelp from "./pages/AiHelp";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -50,24 +53,54 @@ function App() {
         <Route path="/role-selection" element={<RoleSelection />} />
         <Route path="/user/login" element={<UserLogin />} />
         <Route path="/user/signup" element={<UserSignup />} />
+        <Route path="/verify-otp" element={<OTPVerification />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Dashboard */}
-        <Route path="/user/home" element={<UserDashboard />} />
-        <Route path="/user/dashboard" element={<UserDashboard />} />
+        <Route path="/user/home" element={
+          <ProtectedRoute role="user">
+            <UserDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/user/dashboard" element={
+          <ProtectedRoute role="user">
+            <UserDashboard />
+          </ProtectedRoute>
+        } />
 
         {/* Admin */}
         <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute role="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
 
         {/* Features */}
-        <Route path="/budget-tracker" element={<BudgetTracker />} />
-        <Route path="/past-activities" element={<PastActivities />} />
+        <Route path="/budget-tracker" element={
+          <ProtectedRoute role="user">
+            <BudgetTracker />
+          </ProtectedRoute>
+        } />
+        <Route path="/past-activities" element={
+          <ProtectedRoute role="user">
+            <PastActivities />
+          </ProtectedRoute>
+        } />
 
         {/* Profile */}
-        <Route path="/user/profile" element={<ProfilePage />} />
+        <Route path="/user/profile" element={
+          <ProtectedRoute role="user">
+            <ProfilePage />
+          </ProtectedRoute>
+        } />
 
         {/* Reminder */}
-        <Route path="/user/reminder" element={<ReminderPage />} />
+        <Route path="/user/reminder" element={
+          <ProtectedRoute role="user">
+            <ReminderPage />
+          </ProtectedRoute>
+        } />
 
         <Route path="/food-supply" element={<FoodSupplyHotels />} />
 

@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import API from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import "./VenueFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard"; // keep this same as your Route path
@@ -30,6 +32,7 @@ function ConfettiBurst() {
 export default function VenueConfirm() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const venueRequest = location.state?.venueRequest || {};
   const selectedVenue = location.state?.selectedVenue;
@@ -43,6 +46,7 @@ export default function VenueConfirm() {
   });
 
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const total = useMemo(
     () => {
@@ -82,10 +86,75 @@ export default function VenueConfirm() {
     return true;
   };
 
-  const onConfirmSubmit = (e) => {
+  const onConfirmSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setSuccess(true);
+
+    setLoading(true);
+    try {
+      // Step 1: Create Order in Backend
+      const orderResponse = await API.post("/payment/create-order", { amount: total });
+      
+      if (orderResponse.data.success) {
+        const { order } = orderResponse.data;
+        
+        // Step 2: Open Razorpay Modal
+        const options = {
+          key: "rzp_test_placeholder", // Replace with real key or fetch from backend
+          amount: order.amount,
+          currency: order.currency,
+          name: "Infinity Grand Events",
+          description: `Booking for ${selectedVenue.name}`,
+          order_id: order.id,
+          handler: async function (response) {
+            // Step 3: Verify Payment
+            try {
+              const verifyResponse = await API.post("/payment/verify", {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              });
+
+              if (verifyResponse.data.success) {
+                // Step 4: Create Booking on Success
+                const bookingResponse = await API.post("/bookings/create", {
+                  serviceName: selectedVenue.name,
+                  serviceType: "venue",
+                  area: form.area,
+                  eventDate: form.eventDate,
+                  time: form.time,
+                  duration: form.duration,
+                  guests: form.guestCount,
+                  totalAmount: total,
+                  paymentStatus: "paid"
+                });
+
+                if (bookingResponse.data.success) {
+                  setSuccess(true);
+                }
+              }
+            } catch (err) {
+              alert("Payment verification failed!");
+            }
+          },
+          prefill: {
+            name: user?.username || "",
+            email: user?.email || "",
+            contact: user?.phone || ""
+          },
+          theme: {
+            color: "#d4af37"
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to initiate payment.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const goToDashboard = () => {
@@ -161,8 +230,8 @@ export default function VenueConfirm() {
               <strong>₹{total.toLocaleString()}</strong>
             </div>
 
-            <button className="gold-btn full-btn" type="submit" form="venue-confirm-form">
-              CONFIRM BOOKING
+            <button className="gold-btn full-btn" type="submit" form="venue-confirm-form" disabled={loading}>
+              {loading ? "PROCESSING..." : "CONFIRM BOOKING"}
             </button>
           </div>
         </div>

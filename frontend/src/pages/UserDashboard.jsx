@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 import {
   Calculator,
@@ -21,6 +22,7 @@ import "./UserDashboard.css";
 
 function UserDashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const DASHBOARD_PATH = "/user/dashboard";
 
@@ -240,6 +242,7 @@ function UserDashboard() {
               className="notification-btn"
               type="button"
               aria-label="Notifications"
+              onClick={() => handleNavigate("/user/reminder")}
             >
               <Bell size={22} />
               <span />
@@ -266,11 +269,10 @@ function UserDashboard() {
 
           <div className="dashboard-heading">
 
-            <h1>Explore Services</h1>
+            <h1>Welcome, {user?.username || "Guest"}</h1>
 
             <p>
-              Choose from our curated premium event
-              management services
+              Signed in as: <span style={{ color: '#d4af37' }}>{user?.email}</span>
             </p>
 
           </div>

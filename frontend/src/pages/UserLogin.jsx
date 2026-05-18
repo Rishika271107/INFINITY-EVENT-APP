@@ -1,15 +1,46 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import API from "../services/api";
+import { useAuth } from "../context/AuthContext"; // Import useAuth
 import "./UserAuth.css";
 
 function UserLogin() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // Destructure login
   const [showPassword, setShowPassword] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate("/user/home");
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await API.post("/auth/login", formData);
+      
+      if (response.data.success) {
+        // Direct Login Success
+        login(response.data.token, response.data.user);
+        alert(response.data.message || "Login successful!");
+        navigate("/user/dashboard");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,14 +52,18 @@ function UserLogin() {
       </div>
 
       <form className="auth-card login-card" onSubmit={handleLogin}>
-        <div className="form-group">
-          <label>Name</label>
-          <input type="text" placeholder="Enter your name" />
-        </div>
+        {error && <p className="error-message" style={{ color: 'red', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
 
         <div className="form-group">
           <label>Email</label>
-          <input type="email" placeholder="your@email.com" />
+          <input 
+            type="email" 
+            name="email"
+            placeholder="your@email.com" 
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
@@ -37,7 +72,11 @@ function UserLogin() {
           <div className="password-box">
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="••••••••"
+              value={formData.password}
+              onChange={handleChange}
+              required
             />
 
             <button
@@ -48,10 +87,20 @@ function UserLogin() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+          <div className="forgot-password-link" style={{ textAlign: "right", marginTop: "10px" }}>
+            <button 
+              type="button" 
+              className="switch-text" 
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: "0.9rem", color: "#d4af37", textDecoration: "underline" }}
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot Password?
+            </button>
+          </div>
         </div>
 
-        <button type="submit" className="auth-submit-btn">
-          Confirm Details
+        <button type="submit" className="auth-submit-btn" disabled={loading}>
+          {loading ? "Logging in..." : "Confirm Details"}
         </button>
 
         <p className="switch-text">
@@ -72,4 +121,4 @@ function UserLogin() {
   );
 }
 
-export default UserLogin;
+export default UserLogin;

@@ -90,9 +90,14 @@
   color: #22c55e;
 }
 
-.status-badge.confirmed {
+.status-badge.confirmed, .status-badge.pending {
   background: rgba(234, 179, 8, 0.15);
   color: #eab308;
+}
+
+.status-badge.cancelled {
+  background: rgba(255, 77, 77, 0.15);
+  color: #ff4d4d;
 }
 
 .activity-right h4 {
@@ -105,6 +110,21 @@
   border: none;
   padding: 10px;
   border-radius: 50%;
-  cursor: pointer;
-  color: #d4af37;
+}
+.download-btn:hover {
+  background: rgba(212, 175, 55, 0.3);
+}
+
+.loading-state, .error-state, .empty-state {
+  text-align: center;
+  padding: 60px;
+  background: #1a1a1a;
+  border-radius: 16px;
+  border: 1px dashed rgba(212, 175, 55, 0.3);
+}
+
+.area-info {
+  font-size: 13px !important;
+  color: #d4af37 !important;
+  margin-top: 2px !important;
 }

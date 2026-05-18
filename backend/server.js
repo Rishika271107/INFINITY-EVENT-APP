@@ -1,5 +1,5 @@
+require("dotenv").config();
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -7,7 +7,10 @@ const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/db");
 
-dotenv.config();
+console.log("--- ENV VALIDATION ---");
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS LOADED:", !!process.env.EMAIL_PASS);
+console.log("----------------------");
 
 connectDB();
 
@@ -47,12 +50,42 @@ app.use(
   require("./routes/bookingRoutes")
 );
 
+app.use(
+  "/api/admin",
+  require("./routes/adminRoutes")
+);
+
+app.use(
+  "/api/payment",
+  require("./routes/paymentRoutes")
+);
 
 
-const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(
-    `Server running on port ${PORT}`
-  );
-});
+const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 5000;
+const MAX_PORT_TRIES = 5;
+
+function startServer(port, attempt = 1) {
+  const server = app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+
+  server.on("error", (error) => {
+    if (error.code === "EADDRINUSE") {
+      if (attempt < MAX_PORT_TRIES) {
+        const nextPort = port + 1;
+        console.warn(`Port ${port} in use, trying port ${nextPort}...`);
+        startServer(nextPort, attempt + 1);
+      } else {
+        console.error(`Unable to bind to a free port after ${MAX_PORT_TRIES} attempts. Please free a port or set a different PORT in your .env file.`);
+        process.exit(1);
+      }
+      return;
+    }
+
+    console.error("Server error:", error);
+    process.exit(1);
+  });
+}
+
+startServer(DEFAULT_PORT);

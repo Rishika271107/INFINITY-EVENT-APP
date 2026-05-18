@@ -8,10 +8,33 @@ const bookingSchema = new mongoose.Schema(
       required: true
     },
 
-    event: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Event",
+    serviceName: {
+      type: String,
       required: true
+    },
+
+    serviceType: {
+      type: String,
+      enum: ["venue", "food", "photography", "decoration", "fashion", "makeup", "tourist"],
+      required: true
+    },
+
+    area: {
+      type: String,
+    },
+
+    eventDate: {
+      type: Date,
+      required: true
+    },
+
+    time: {
+      type: String,
+    },
+
+    duration: {
+      type: Number,
+      default: 1
     },
 
     guests: {
@@ -26,21 +49,13 @@ const bookingSchema = new mongoose.Schema(
 
     bookingStatus: {
       type: String,
-      enum: [
-        "pending",
-        "confirmed",
-        "cancelled"
-      ],
+      enum: ["pending", "confirmed", "cancelled"],
       default: "pending"
     },
 
     paymentStatus: {
       type: String,
-      enum: [
-        "pending",
-        "paid",
-        "failed"
-      ],
+      enum: ["pending", "paid", "failed"],
       default: "pending"
     }
   },

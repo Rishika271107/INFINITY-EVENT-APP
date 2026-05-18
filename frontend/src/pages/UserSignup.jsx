@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import API from "../services/api";
 import "./UserAuth.css";
 
 function UserSignup() {
@@ -8,10 +9,50 @@ function UserSignup() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: ""
+  });
+  
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("/user/home");
+    setError("");
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await API.post("/auth/register", {
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password
+      });
+
+      if (response.data.success) {
+        localStorage.setItem("signupEmail", formData.email);
+        alert(response.data.message);
+        navigate("/verify-otp");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -23,19 +64,42 @@ function UserSignup() {
       </div>
 
       <form className="auth-card signup-card" onSubmit={handleSignup}>
+        {error && <p className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+        
         <div className="form-group">
           <label>Username</label>
-          <input type="text" placeholder="Enter username" />
+          <input 
+            type="text" 
+            name="username"
+            placeholder="Enter username" 
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Email</label>
-          <input type="email" placeholder="your@email.com" />
+          <input 
+            type="email" 
+            name="email"
+            placeholder="your@email.com" 
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Phone Number</label>
-          <input type="tel" placeholder="9876543210" />
+          <input 
+            type="tel" 
+            name="phone"
+            placeholder="9876543210" 
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
@@ -44,7 +108,11 @@ function UserSignup() {
           <div className="password-box">
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="••••••••"
+              value={formData.password}
+              onChange={handleChange}
+              required
             />
 
             <button
@@ -63,7 +131,11 @@ function UserSignup() {
           <div className="password-box">
             <input
               type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
               placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
             />
 
             <button
@@ -76,8 +148,8 @@ function UserSignup() {
           </div>
         </div>
 
-        <button type="submit" className="auth-submit-btn">
-          Confirm Details
+        <button type="submit" className="auth-submit-btn" disabled={loading}>
+          {loading ? "Creating Account..." : "Confirm Details"}
         </button>
 
         <p className="switch-text">
@@ -91,4 +163,4 @@ function UserSignup() {
   );
 }
 
-export default UserSignup;
+export default UserSignup;

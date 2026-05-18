@@ -1,5 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import API from "../services/api";
 
 import {
   LayoutDashboard,
@@ -315,26 +317,86 @@ function NotificationDropdown({ notifications, onClear, onMarkRead }) {
 function OverviewSection({ bookings, setBookings, setActiveSection, navigate }) {
   const [bookingFilter, setBookingFilter] = useState("all");
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalBookings: 0,
+    pendingBookings: 0,
+    totalRevenue: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await API.get("/admin/stats");
+        if (response.data.success) {
+          setStats(response.data.stats);
+        }
+      } catch (err) {
+        console.error("Failed to fetch admin stats:", err);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const dynamicStats = [
+    {
+      id: "total-bookings",
+      label: "Total Bookings",
+      value: stats.totalBookings.toLocaleString(),
+      delta: "Real-time sync",
+      positive: true,
+      icon: <CalendarCheck size={22} />,
+    },
+    {
+      id: "total-revenue",
+      label: "Total Revenue",
+      value: `₹${stats.totalRevenue.toLocaleString()}`,
+      delta: "From paid bookings",
+      positive: true,
+      icon: <TrendingUp size={22} />,
+    },
+    {
+      id: "total-users",
+      label: "Registered Users",
+      value: stats.totalUsers.toLocaleString(),
+      delta: "User accounts",
+      positive: true,
+      icon: <Users size={22} />,
+    },
+    {
+      id: "pending-orders",
+      label: "Pending Bookings",
+      value: stats.pendingBookings.toLocaleString(),
+      delta: "Requires attention",
+      positive: false,
+      icon: <Clock size={22} />,
+    },
+  ];
 
   const filteredBookings = useMemo(() => {
     if (bookingFilter === "all") return bookings;
     return bookings.filter((b) => b.status === bookingFilter);
   }, [bookings, bookingFilter]);
 
-  const updateStatus = (id, newStatus) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-    );
-    setSelectedBooking((prev) =>
-      prev && prev.id === id ? { ...prev, status: newStatus } : prev
-    );
+  const updateStatus = async (id, newStatus) => {
+    try {
+      await API.put(`/bookings/${id}`, { bookingStatus: newStatus });
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+      );
+      if (selectedBooking && selectedBooking.id === id) {
+        setSelectedBooking((prev) => ({ ...prev, status: newStatus }));
+      }
+    } catch (err) {
+      alert("Failed to update status.");
+    }
   };
 
   return (
     <>
       {/* STAT CARDS */}
       <div className="admin-stats-grid">
-        {STATS.map((stat) => (
+        {dynamicStats.map((stat) => (
           <div key={stat.id} className="admin-stat-card" id={`stat-${stat.id}`}>
             <div className="stat-icon">{stat.icon}</div>
             <div className="stat-body">
@@ -565,12 +627,38 @@ function OverviewSection({ bookings, setBookings, setActiveSection, navigate }) 
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // ── Core nav state ────────────────────────────────────────────────────────
   const [activeSection, setActiveSection] = useState("overview");
 
-  // ── Shared bookings state (used by overview + bookings section) ───────────
-  const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
+  // ── Shared bookings state ───────────
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    const fetchAllBookings = async () => {
+      try {
+        const response = await API.get("/bookings/all");
+        if (response.data.success) {
+          // Map backend bookings to frontend UI structure
+          const mappedBookings = response.data.bookings.map(bk => ({
+            id: bk._id,
+            user: bk.user?.username || "Unknown",
+            service: bk.serviceName,
+            serviceIcon: <Building2 size={15} />, // Default icon
+            amount: `₹${bk.totalAmount.toLocaleString()}`,
+            date: new Date(bk.eventDate).toLocaleDateString(),
+            status: bk.bookingStatus,
+            payment: bk.paymentStatus === "paid" ? "Paid" : "Pending"
+          }));
+          setBookings(mappedBookings);
+        }
+      } catch (err) {
+        console.error("Failed to fetch all bookings:", err);
+      }
+    };
+    fetchAllBookings();
+  }, []);
 
   // ── Notification state ────────────────────────────────────────────────────
   const [showNotif, setShowNotif]       = useState(false);
@@ -592,8 +680,6 @@ function AdminDashboard() {
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [showNotif]);
-
-  const pendingStat = STATS.find((s) => s.id === "pending-orders");
 
   const handleMarkAllRead = () =>
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
@@ -669,7 +755,7 @@ function AdminDashboard() {
         <header className="admin-dash-topbar">
           <div className="topbar-left">
             <h2>
-              {SIDEBAR_ITEMS.find((s) => s.section === activeSection)?.label ?? "Dashboard"}
+              Welcome, {user?.username || "Admin"}
             </h2>
             {pendingStat && (
               <span className="topbar-pending-pill">
