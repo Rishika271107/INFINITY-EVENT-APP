@@ -32,9 +32,13 @@ function UserLogin() {
       
       if (response.data.success) {
         // Direct Login Success
-        login(response.data.token, response.data.user);
-        alert(response.data.message || "Login successful!");
-        navigate("/user/dashboard");
+        const { user, token } = response.data;
+        login(user, token);
+        if (user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");

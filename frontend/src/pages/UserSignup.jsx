@@ -45,7 +45,6 @@ function UserSignup() {
 
       if (response.data.success) {
         localStorage.setItem("signupEmail", formData.email);
-        alert(response.data.message);
         navigate("/verify-otp");
       }
     } catch (err) {

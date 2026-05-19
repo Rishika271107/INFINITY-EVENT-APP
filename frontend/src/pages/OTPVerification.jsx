@@ -34,8 +34,6 @@ const OTPVerification = () => {
                 
                 // Login immediately
                 login(user, token);
-                
-                alert('Verification successful! Welcome to Infinity.');
                 localStorage.removeItem('signupEmail');
 
                 // Role based redirect

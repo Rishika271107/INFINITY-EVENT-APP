@@ -22,7 +22,6 @@ function ForgotPassword() {
     try {
       const response = await API.post("/auth/forgot-password", { email });
       if (response.data.success) {
-        alert(response.data.message || "OTP sent to your email.");
         setStep(2);
       }
     } catch (err) {
@@ -45,7 +44,6 @@ function ForgotPassword() {
       });
 
       if (response.data.success) {
-        alert("Password reset successfully. You can now login.");
         navigate("/user/login");
       }
     } catch (err) {

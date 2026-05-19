@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -19,7 +19,8 @@ import {
   ShieldCheck,
   Ticket,
   Download,
-  CreditCard
+  CreditCard,
+  Camera
 } from "lucide-react";
 
 import "./ProfilePage.css";
@@ -29,6 +30,24 @@ function ProfilePage() {
   const navigate = useNavigate();
   const { user, login } = useAuth();
   const [locationName, setLocationName] = useState("Fetching location...");
+  const fileInputRef = useRef(null);
+  const profileImageKey = `profileImage_${user?.email || "guest"}`;
+  const [profileImage, setProfileImage] = useState(
+    () => localStorage.getItem(`profileImage_${user?.email || "guest"}`) || null
+  );
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = reader.result;
+      setProfileImage(dataUrl);
+      localStorage.setItem(profileImageKey, dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const [isEditing, setIsEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({
     username: user?.username || "",
@@ -135,10 +154,9 @@ function ProfilePage() {
       {/* Sidebar */}
       <aside className="profile-sidebar">
         <div className="sidebar-logo">
-          <div className="logo-icon">∞</div>
           <div className="logo-text">
             <h1>INFINITY</h1>
-            <span>GRAND EVENTS</span>
+            <span>Event Management</span>
           </div>
         </div>
 
@@ -186,11 +204,27 @@ function ProfilePage() {
         <section className="main-content-scrollable">
           {/* User Profile Card */}
           <div className="user-profile-card">
-            <div className="profile-avatar-large">
-              <div className="avatar-placeholder">
-                <User size={64} />
+            <div
+              className="profile-avatar-large"
+              onClick={() => fileInputRef.current.click()}
+              title="Click to upload profile photo"
+            >
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" className="avatar-image" />
+              ) : (
+                <div className="avatar-empty"></div>
+              )}
+              <div className="avatar-upload-overlay">
+                <Camera size={22} />
               </div>
             </div>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleImageUpload}
+            />
             <div className="profile-details">
               {isEditing ? (
                 <input

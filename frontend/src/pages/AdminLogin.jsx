@@ -25,9 +25,13 @@ function AdminLogin() {
     try {
       const response = await API.post("/auth/admin-login", formData);
       if (response.data.success) {
-        login(response.data.token, response.data.user);
-        alert(response.data.message || "Admin login successful!");
-        navigate("/admin/dashboard");
+        const { user, token } = response.data;
+        login(user, token);
+        if (user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || "Admin login failed.");
