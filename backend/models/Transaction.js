@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema(
   {
+    booking: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Booking",
+      required: true
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -15,10 +20,23 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       default: "INR"
     },
-    razorpayOrderId: {
+    paymentMethod: {
       type: String,
-      required: true,
-      unique: true
+      default: "unknown"
+    },
+    // Supporting both camelCase and requested snake_case for maximum resilience
+    razorpay_order_id: {
+      type: String,
+      required: true
+    },
+    razorpay_payment_id: {
+      type: String
+    },
+    razorpay_signature: {
+      type: String
+    },
+    razorpayOrderId: {
+      type: String
     },
     razorpayPaymentId: {
       type: String

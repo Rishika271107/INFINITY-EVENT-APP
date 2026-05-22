@@ -6,18 +6,7 @@ const ProtectedRoute = ({ children, role }) => {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return (
-            <div style={{ 
-                height: '100vh', 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center',
-                background: '#050505',
-                color: '#d4af37'
-            }}>
-                <h1>Loading...</h1>
-            </div>
-        );
+        return <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading...</div>;
     }
 
     if (!user) {

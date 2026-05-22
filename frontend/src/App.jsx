@@ -42,6 +42,7 @@ import OTPVerification from "./pages/OTPVerification";
 import BookingSuccess from "./pages/BookingSuccess";
 import AiHelp from "./pages/AiHelp";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AdminProvider } from "./context/AdminContext";
 
 function App() {
   return (
@@ -72,7 +73,9 @@ function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={
           <ProtectedRoute role="admin">
-            <AdminDashboard />
+            <AdminProvider>
+              <AdminDashboard />
+            </AdminProvider>
           </ProtectedRoute>
         } />
 

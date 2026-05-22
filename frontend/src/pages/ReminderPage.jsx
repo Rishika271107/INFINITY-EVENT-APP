@@ -1,39 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Bell, Clock, Plus, Trash2, X } from "lucide-react";
+import API from "../services/api";
 import "./ReminderPage.css";
 
 function ReminderPage() {
   const navigate = useNavigate();
 
   const [showPopup, setShowPopup] = useState(false);
-
-  const [reminders, setReminders] = useState([
-    {
-      id: 1,
-      eventName: "Wedding Venue Visit",
-      date: "2026-03-10",
-      time: "10:00",
-    },
-    {
-      id: 2,
-      eventName: "Caterer Tasting",
-      date: "2026-03-12",
-      time: "14:00",
-    },
-    {
-      id: 3,
-      eventName: "Photographer Meeting",
-      date: "2026-03-15",
-      time: "11:00",
-    },
-    {
-      id: 4,
-      eventName: "Decoration Finalization",
-      date: "2026-03-18",
-      time: "16:00",
-    },
-  ]);
+  const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     eventName: "",
@@ -41,45 +17,76 @@ function ReminderPage() {
     time: "",
   });
 
-  const formatDateTime = (date, time) => {
-    const dateObj = new Date(`${date}T${time}`);
+  useEffect(() => {
+    const fetchReminders = async () => {
+      try {
+        setLoading(true);
+        const res = await API.get("/reminders");
+        if (res.data?.success) {
+          setReminders(res.data.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch reminders:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReminders();
+  }, []);
 
-    return dateObj.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+  const formatDateTime = (date, time) => {
+    try {
+      const dateObj = new Date(`${date}T${time}`);
+
+      return dateObj.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch (e) {
+      return `${date} ${time}`;
+    }
   };
 
-  const handleAddReminder = () => {
+  const handleAddReminder = async () => {
     if (!formData.eventName || !formData.date || !formData.time) {
       alert("Please fill all details");
       return;
     }
 
-    const newReminder = {
-      id: Date.now(),
-      eventName: formData.eventName,
-      date: formData.date,
-      time: formData.time,
-    };
+    try {
+      const res = await API.post("/reminders", {
+        eventName: formData.eventName,
+        date: formData.date,
+        time: formData.time
+      });
 
-    setReminders([...reminders, newReminder]);
-
-    setFormData({
-      eventName: "",
-      date: "",
-      time: "",
-    });
-
-    setShowPopup(false);
+      if (res.data?.success) {
+        setReminders((prev) => [...prev, res.data.data]);
+        setFormData({
+          eventName: "",
+          date: "",
+          time: "",
+        });
+        setShowPopup(false);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || "Failed to set reminder");
+    }
   };
 
-  const handleDelete = (id) => {
-    setReminders(reminders.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const res = await API.delete(`/reminders/${id}`);
+      if (res.data?.success) {
+        setReminders(reminders.filter((item) => item._id !== id));
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || "Failed to delete reminder");
+    }
   };
 
   return (
@@ -102,27 +109,31 @@ function ReminderPage() {
           </button>
         </div>
 
-        <div className="reminder-list">
-          {reminders.map((reminder) => (
-            <div className="reminder-card" key={reminder.id}>
-              <div className="reminder-left">
-                <Bell className="bell-icon" size={23} />
+        {loading ? (
+          <p className="loading-text" style={{ color: "#f3cf72", textAlign: "center", marginTop: "2rem" }}>Loading reminders...</p>
+        ) : (
+          <div className="reminder-list">
+            {reminders.map((reminder) => (
+              <div className="reminder-card" key={reminder._id}>
+                <div className="reminder-left">
+                  <Bell className="bell-icon" size={23} />
 
-                <div>
-                  <h3>{reminder.eventName}</h3>
-                  <p>
-                    <Clock size={15} />
-                    {formatDateTime(reminder.date, reminder.time)}
-                  </p>
+                  <div>
+                    <h3>{reminder.eventName}</h3>
+                    <p>
+                      <Clock size={15} />
+                      {formatDateTime(reminder.date, reminder.time)}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <button className="delete-btn" onClick={() => handleDelete(reminder.id)}>
-                <Trash2 size={19} />
-              </button>
-            </div>
-          ))}
-        </div>
+                <button className="delete-btn" onClick={() => handleDelete(reminder._id)}>
+                  <Trash2 size={19} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {showPopup && (

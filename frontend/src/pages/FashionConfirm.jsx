@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import API from "../services/api";
 import "./FashionFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard";
@@ -39,6 +40,7 @@ export default function FashionConfirm() {
   });
 
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const total = useMemo(() => {
     if (!selectedDesigner) return 0;
@@ -63,13 +65,29 @@ export default function FashionConfirm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (!form.hours || !form.date) {
       alert("Please fill hours and date.");
       return;
     }
-    setSuccess(true);
+    setLoading(true);
+    try {
+      const res = await API.post("/bookings/create", {
+        eventDate: form.date,
+        durationHours: Number(form.hours),
+        serviceName: selectedDesigner.name,
+        serviceType: "Fashion Designing",
+        totalAmount: total,
+      });
+      if (res.data?.success) {
+        setSuccess(true);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || "Failed to book fashion service.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const goDashboard = () => {
@@ -134,8 +152,8 @@ export default function FashionConfirm() {
               <strong>₹{total.toLocaleString()}</strong>
             </div>
 
-            <button className="gold-btn full-btn" type="submit" form="fashion-booking-form">
-              CONFIRM BOOKING
+            <button className="gold-btn full-btn" type="submit" form="fashion-booking-form" disabled={loading}>
+              {loading ? "BOOKING..." : "CONFIRM BOOKING"}
             </button>
           </aside>
         </div>

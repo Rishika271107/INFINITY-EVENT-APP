@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import API from "../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./MakeupFlow.css";
 
@@ -38,6 +39,7 @@ export default function MakeupConfirm() {
     venueAddress: "",
     duration: 2,
   });
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const total = useMemo(() => {
@@ -63,13 +65,29 @@ export default function MakeupConfirm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onConfirm = (e) => {
+  const onConfirm = async (e) => {
     e.preventDefault();
     if (!form.date || !form.time || !form.gender || !form.occasion || !form.venueAddress || !form.duration) {
       alert("Please fill all booking details.");
       return;
     }
-    setSuccess(true);
+    setLoading(true);
+    try {
+      const res = await API.post("/bookings/create", {
+        eventDate: form.date,
+        durationHours: Number(form.duration),
+        serviceName: selectedProvider.name,
+        serviceType: "Makeup",
+        totalAmount: total,
+      });
+      if (res.data?.success) {
+        setSuccess(true);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || "Failed to book makeup service.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

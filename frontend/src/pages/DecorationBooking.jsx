@@ -1,12 +1,12 @@
 import { useState } from "react";
-import "./DecorationBooking.css";
+import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 function DecorationBooking() {
 
   const navigate = useNavigate();
 
-  const [days, setDays] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const pricePerDay = 15000;
 
@@ -110,7 +110,26 @@ function DecorationBooking() {
 
             <button
               className="confirm-btn"
-              onClick={() => navigate("/booking-success")}
+              disabled={loading}
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  const res = await API.post("/bookings/create", {
+                    eventDate: new Date().toISOString(),
+                    durationHours: Number(days),
+                    serviceName: "Royal Floral Studio",
+                    serviceType: "Decoration",
+                    totalAmount: total,
+                  });
+                  if (res.data?.success) {
+                    navigate("/booking-success");
+                  }
+                } catch (err) {
+                  alert(err.response?.data?.message || err.message || "Failed to book decoration service.");
+                } finally {
+                  setLoading(false);
+                }
+              }}
             >
               CONFIRM BOOKING
             </button>

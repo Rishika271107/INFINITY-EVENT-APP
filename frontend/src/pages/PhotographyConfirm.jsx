@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import API from "../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./PhotographyFlow.css";
 
@@ -40,6 +41,7 @@ export default function PhotographyConfirm() {
     locationName: "",
     shootType: photographyRequest.eventType || "",
   });
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const total = useMemo(() => {
@@ -65,13 +67,29 @@ export default function PhotographyConfirm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onConfirm = (e) => {
+  const onConfirm = async (e) => {
     e.preventDefault();
     if (!form.hours || !form.date || !form.locationName || !form.shootType) {
       alert("Please fill all booking details.");
       return;
     }
-    setSuccess(true);
+    setLoading(true);
+    try {
+      const res = await API.post("/bookings/create", {
+        eventDate: form.date,
+        durationHours: Number(form.hours),
+        serviceName: selectedPhotographer.name,
+        serviceType: "Photography",
+        totalAmount: total,
+      });
+      if (res.data?.success) {
+        setSuccess(true);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || "Failed to book photography service.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -41,7 +41,11 @@ function UserLogin() {
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+      if (!err.response) {
+        setError("Connection to server failed. Please ensure the backend server is started.");
+      } else {
+        setError(err.response.data?.message || "Login failed. Please check your credentials.");
+      }
     } finally {
       setLoading(false);
     }

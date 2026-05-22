@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import API from "../services/api";
@@ -48,7 +48,11 @@ function UserSignup() {
         navigate("/verify-otp");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      if (!err.response) {
+        setError("Connection to server failed. Please ensure the backend server is started.");
+      } else {
+        setError(err.response.data?.message || "Signup failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -162,4 +166,4 @@ function UserSignup() {
   );
 }
 
-export default UserSignup;
+export default UserSignup;

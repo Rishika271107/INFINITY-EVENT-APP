@@ -1,6 +1,7 @@
-import { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useContext, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { AdminContext } from "../context/AdminContext";
 import API from "../services/api";
 
 import {
@@ -29,13 +30,16 @@ import {
 
 import "./AdminDashboard.css";
 import "./AdminSections.css";
-import {
-  BookingsSection,
-  UsersSection,
-  VendorsSection,
-  RevenueSection,
-  SettingsSection,
-} from "./AdminSections";
+import Loader from "../components/Loader";
+import ErrorBoundary from "../components/ErrorBoundary";
+
+// Lazy load section components
+const BookingsSection = lazy(() => import('./AdminSections').then(m => ({ default: m.BookingsSection })));
+const UsersSection = lazy(() => import('./AdminSections').then(m => ({ default: m.UsersSection })));
+const VendorsSection = lazy(() => import('./AdminSections').then(m => ({ default: m.VendorsSection })));
+const RevenueSection = lazy(() => import('./AdminSections').then(m => ({ default: m.RevenueSection })));
+const SettingsSection = lazy(() => import('./AdminSections').then(m => ({ default: m.SettingsSection })));
+
 
 // ─── MOCK DATA ────────────────────────────────────────────────────────────────
 
@@ -314,29 +318,9 @@ function NotificationDropdown({ notifications, onClear, onMarkRead }) {
 
 // ─── OVERVIEW SECTION (inline) ────────────────────────────────────────────────
 
-function OverviewSection({ bookings, setBookings, setActiveSection, navigate }) {
+function OverviewSection({ bookings, setBookings, setActiveSection, navigate, stats, loadingStats, loadingBookings }) {
   const [bookingFilter, setBookingFilter] = useState("all");
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalBookings: 0,
-    pendingBookings: 0,
-    totalRevenue: 0
-  });
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await API.get("/admin/stats");
-        if (response.data.success) {
-          setStats(response.data.stats);
-        }
-      } catch (err) {
-        console.error("Failed to fetch admin stats:", err);
-      }
-    };
-    fetchStats();
-  }, []);
 
   const dynamicStats = [
     {
@@ -395,151 +379,165 @@ function OverviewSection({ bookings, setBookings, setActiveSection, navigate }) 
   return (
     <>
       {/* STAT CARDS */}
-      <div className="admin-stats-grid">
-        {dynamicStats.map((stat) => (
-          <div key={stat.id} className="admin-stat-card" id={`stat-${stat.id}`}>
-            <div className="stat-icon">{stat.icon}</div>
-            <div className="stat-body">
-              <p className="stat-label">{stat.label}</p>
-              <h3 className="stat-value">{stat.value}</h3>
-              <p className={`stat-delta ${stat.positive ? "delta-up" : "delta-down"}`}>
-                {stat.delta}
-              </p>
+      {loadingStats ? (
+        <Loader type="cards" count={4} />
+      ) : (
+        <div className="admin-stats-grid">
+          {dynamicStats.map((stat) => (
+            <div key={stat.id} className="admin-stat-card" id={`stat-${stat.id}`}>
+              <div className="stat-icon">{stat.icon}</div>
+              <div className="stat-body">
+                <p className="stat-label">{stat.label}</p>
+                <h3 className="stat-value">{stat.value}</h3>
+                <p className={`stat-delta ${stat.positive ? "delta-up" : "delta-down"}`}>
+                  {stat.delta}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* CHARTS ROW */}
-      <div className="admin-charts-row">
-        <div className="admin-card chart-card" id="revenue-chart">
-          <div className="admin-card-header">
-            <h3>Monthly Revenue</h3>
-            <span className="card-tag">Last 8 Months</span>
-          </div>
-          <div className="bar-chart">
-            {REVENUE_BARS.map((bar) => (
-              <div key={bar.month} className="bar-col">
-                <div
-                  className="bar-fill"
-                  style={{ height: `${bar.value}%` }}
-                  title={`${bar.month}: ${bar.value}%`}
-                />
-                <span className="bar-label">{bar.month}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="admin-card breakdown-card" id="service-breakdown">
-          <div className="admin-card-header">
-            <h3>Revenue by Service</h3>
-            <span className="card-tag">This Year</span>
-          </div>
-          <div className="breakdown-list">
-            {SERVICE_BREAKDOWN.map((item) => (
-              <div key={item.label} className="breakdown-row">
-                <div className="breakdown-label">
-                  <span className="breakdown-icon" style={{ color: item.color }}>
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                </div>
-                <div className="breakdown-bar-wrap">
+      {loadingStats ? (
+        <Loader type="charts" />
+      ) : (
+        <div className="admin-charts-row">
+          <div className="admin-card chart-card" id="revenue-chart">
+            <div className="admin-card-header">
+              <h3>Monthly Revenue</h3>
+              <span className="card-tag">Last 8 Months</span>
+            </div>
+            <div className="bar-chart">
+              {REVENUE_BARS.map((bar) => (
+                <div key={bar.month} className="bar-col">
                   <div
-                    className="breakdown-bar-fill"
-                    style={{ width: `${item.pct}%`, background: item.color }}
+                    className="bar-fill"
+                    style={{ height: `${bar.value}%` }}
+                    title={`${bar.month}: ${bar.value}%`}
                   />
+                  <span className="bar-label">{bar.month}</span>
                 </div>
-                <span className="breakdown-pct">{item.pct}%</span>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          <div className="admin-card breakdown-card" id="service-breakdown">
+            <div className="admin-card-header">
+              <h3>Revenue by Service</h3>
+              <span className="card-tag">This Year</span>
+            </div>
+            <div className="breakdown-list">
+              {SERVICE_BREAKDOWN.map((item) => (
+                <div key={item.label} className="breakdown-row">
+                  <div className="breakdown-label">
+                    <span className="breakdown-icon" style={{ color: item.color }}>
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </div>
+                  <div className="breakdown-bar-wrap">
+                    <div
+                      className="breakdown-bar-fill"
+                      style={{ width: `${item.pct}%`, background: item.color }}
+                    />
+                  </div>
+                  <span className="breakdown-pct">{item.pct}%</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* RECENT BOOKINGS TABLE */}
       <div className="admin-card bookings-card" id="recent-bookings">
         <div className="admin-card-header">
           <h3>Recent Bookings</h3>
-          <div className="filter-pills">
-            {["all", "confirmed", "pending", "cancelled"].map((f) => (
-              <button
-                key={f}
-                id={`filter-${f}`}
-                className={`filter-pill ${bookingFilter === f ? "active" : ""}`}
-                onClick={() => setBookingFilter(f)}
-                type="button"
-              >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="bookings-table-wrap">
-          <table className="bookings-table">
-            <thead>
-              <tr>
-                <th>Booking ID</th>
-                <th>User</th>
-                <th>Service</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredBookings.map((bk) => (
-                <tr key={bk.id}>
-                  <td className="booking-id">{bk.id}</td>
-                  <td>{bk.user}</td>
-                  <td>
-                    <span className="service-tag">
-                      {bk.serviceIcon}
-                      {bk.service}
-                    </span>
-                  </td>
-                  <td className="amount-col">{bk.amount}</td>
-                  <td className="date-col">{bk.date}</td>
-                  <td>
-                    <StatusBadge status={bk.status} />
-                  </td>
-                  <td>
-                    <div className="action-btns">
-                      {bk.status === "pending" && (
-                        <>
-                          <button
-                            className="approve-btn"
-                            type="button"
-                            onClick={() => updateStatus(bk.id, "confirmed")}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="reject-btn"
-                            type="button"
-                            onClick={() => updateStatus(bk.id, "cancelled")}
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-                      <button
-                        className="view-btn"
-                        id={`view-booking-${bk.id}`}
-                        type="button"
-                        onClick={() => setSelectedBooking(bk)}
-                      >
-                        View
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+          {!loadingBookings && (
+            <div className="filter-pills">
+              {["all", "confirmed", "pending", "cancelled"].map((f) => (
+                <button
+                  key={f}
+                  id={`filter-${f}`}
+                  className={`filter-pill ${bookingFilter === f ? "active" : ""}`}
+                  onClick={() => setBookingFilter(f)}
+                  type="button"
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
               ))}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
+        {loadingBookings ? (
+          <Loader type="table" count={5} />
+        ) : (
+          <div className="bookings-table-wrap">
+            <table className="bookings-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>User</th>
+                  <th>Service</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredBookings.map((bk) => (
+                  <tr key={bk.id}>
+                    <td className="booking-id">{bk.id}</td>
+                    <td>{bk.user}</td>
+                    <td>
+                      <span className="service-tag">
+                        {bk.serviceIcon}
+                        {bk.service}
+                      </span>
+                    </td>
+                    <td className="amount-col">{bk.amount}</td>
+                    <td className="date-col">{bk.date}</td>
+                    <td>
+                      <StatusBadge status={bk.status} />
+                    </td>
+                    <td>
+                      <div className="action-btns">
+                        {bk.status === "pending" && (
+                          <>
+                            <button
+                              className="approve-btn"
+                              type="button"
+                              onClick={() => updateStatus(bk.id, "confirmed")}
+                            >
+                              Approve
+                            </button>
+                            <button
+                              className="reject-btn"
+                              type="button"
+                              onClick={() => updateStatus(bk.id, "cancelled")}
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                        <button
+                          className="view-btn"
+                          id={`view-booking-${bk.id}`}
+                          type="button"
+                          onClick={() => setSelectedBooking(bk)}
+                        >
+                          View
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* BOTTOM ROW: Top Vendors + Quick Actions */}
@@ -625,40 +623,32 @@ function OverviewSection({ bookings, setBookings, setActiveSection, navigate }) 
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
+// Updated AdminDashboard with AdminContext
 function AdminDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  // ── Core nav state ────────────────────────────────────────────────────────
   const [activeSection, setActiveSection] = useState("overview");
 
-  // ── Shared bookings state ───────────
-  const [bookings, setBookings] = useState([]);
+  // Use shared admin context
+  const {
+    bookings,
+    setBookings,
+    stats,
+    loadingBookings,
+    loadingStats,
+    error,
+    fetchBookings,
+    fetchStats,
+  } = useContext(AdminContext);
+  const pendingStat = stats?.pendingBookings || 0;
 
+  // Refresh data on mount if needed
   useEffect(() => {
-    const fetchAllBookings = async () => {
-      try {
-        const response = await API.get("/bookings/all");
-        if (response.data.success) {
-          // Map backend bookings to frontend UI structure
-          const mappedBookings = response.data.bookings.map(bk => ({
-            id: bk._id,
-            user: bk.user?.username || "Unknown",
-            service: bk.serviceName,
-            serviceIcon: <Building2 size={15} />, // Default icon
-            amount: `₹${bk.totalAmount.toLocaleString()}`,
-            date: new Date(bk.eventDate).toLocaleDateString(),
-            status: bk.bookingStatus,
-            payment: bk.paymentStatus === "paid" ? "Paid" : "Pending"
-          }));
-          setBookings(mappedBookings);
-        }
-      } catch (err) {
-        console.error("Failed to fetch all bookings:", err);
-      }
-    };
-    fetchAllBookings();
+    if (!bookings.length) fetchBookings();
+    if (!stats.totalUsers) fetchStats();
   }, []);
+
+
 
   // ── Notification state ────────────────────────────────────────────────────
   const [showNotif, setShowNotif]       = useState(false);
@@ -757,10 +747,10 @@ function AdminDashboard() {
             <h2>
               Welcome, {user?.username || "Admin"}
             </h2>
-            {pendingStat && (
+            {pendingStat > 0 && (
               <span className="topbar-pending-pill">
                 <AlertCircle size={13} />
-                {pendingStat.value} pending
+                {pendingStat} pending
               </span>
             )}
           </div>
@@ -803,14 +793,47 @@ function AdminDashboard() {
               setBookings={setBookings}
               setActiveSection={setActiveSection}
               navigate={navigate}
+              stats={stats}
+              loadingBookings={loadingBookings}
+              loadingStats={loadingStats}
             />
           )}
 
-          {activeSection === "bookings" && <BookingsSection />}
-          {activeSection === "users"    && <UsersSection />}
-          {activeSection === "vendors"  && <VendorsSection />}
-          {activeSection === "revenue"  && <RevenueSection />}
-          {activeSection === "settings" && <SettingsSection />}
+          {activeSection === "bookings" && (
+            <ErrorBoundary>
+              <Suspense fallback={<Loader type="cards" count={1} />}> 
+                <BookingsSection />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {activeSection === "users" && (
+            <ErrorBoundary>
+              <Suspense fallback={<Loader type="cards" count={1} />}> 
+                <UsersSection />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {activeSection === "vendors" && (
+            <ErrorBoundary>
+              <Suspense fallback={<Loader type="cards" count={1} />}> 
+                <VendorsSection />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {activeSection === "revenue" && (
+            <ErrorBoundary>
+              <Suspense fallback={<Loader type="cards" count={1} />}> 
+                <RevenueSection />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {activeSection === "settings" && (
+            <ErrorBoundary>
+              <Suspense fallback={<Loader type="cards" count={1} />}> 
+                <SettingsSection />
+              </Suspense>
+            </ErrorBoundary>
+          )}
 
         </section>
       </main>

@@ -1,0 +1,315 @@
+/* ── SHIMMER & SKELETON BASE ────────────────── */
+.shimmer-card {
+  background: #141414 !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 14px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.shimmer-element {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02) 25%,
+    rgba(255, 255, 255, 0.08) 37%,
+    rgba(255, 255, 255, 0.02) 63%
+  );
+  background-size: 400% 100%;
+  animation: luxuryShimmer 1.5s ease infinite;
+  border-radius: 6px;
+  height: 14px;
+}
+
+@keyframes luxuryShimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Spinner Loader */
+.luxury-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.luxury-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3.5px solid rgba(212, 175, 55, 0.08);
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: luxuryRotate 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.12);
+}
+
+@keyframes luxuryRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.luxury-loading-text {
+  font-family: "Cinzel", serif;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 600;
+  animation: luxuryPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes luxuryPulse {
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.95;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
+  }
+}
+
+/* Skeletons Layouts */
+.skeleton-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.skeleton-card .skeleton-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.skeleton-text-sm {
+  height: 12px;
+}
+
+.skeleton-text-md {
+  height: 15px;
+}
+
+.skeleton-text-lg {
+  height: 28px;
+}
+
+.skeleton-text-xs {
+  height: 10px;
+}
+
+.skeleton-badge {
+  height: 20px;
+  border-radius: 12px;
+}
+
+/* Table Skeletons */
+.skeleton-table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.skeleton-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.skeleton-table-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  gap: 12px;
+}
+
+.skeleton-table-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* User Profiling in Skeleton */
+.skeleton-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 30%;
+}
+
+/* Charts Skeletons */
+.skeleton-charts-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+@media(max-width: 900px) {
+  .skeleton-charts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeleton-chart-main {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.skeleton-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 160px;
+  padding: 0 10px;
+  flex: 1;
+}
+
+.skeleton-chart-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 8%;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.skeleton-chart-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+}
+
+.skeleton-chart-breakdown {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.skeleton-breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.skeleton-breakdown-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Notifications Skeletons */
+.skeleton-notif-container {
+  width: 100%;
+  max-width: 360px;
+}
+
+.skeleton-notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.skeleton-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.skeleton-notif-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.skeleton-notif-body {
+  flex: 1;
+}
+
+/* Payments Skeletons */
+.skeleton-payments {
+  width: 100%;
+}
+
+.skeleton-payment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.015);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.skeleton-payment-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skeleton-payment-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-payment-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}

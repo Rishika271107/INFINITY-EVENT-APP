@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./TouristFlow.css";
+import API from "../services/api";
 
 function ConfettiBurst() {
   const [pieces] = useState(() =>
@@ -40,6 +40,7 @@ export default function TouristConfirm() {
     roomType: selectedHotel?.type || "Deluxe",
   });
 
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const total = useMemo(() => {
@@ -66,13 +67,29 @@ export default function TouristConfirm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onConfirm = (e) => {
+  const onConfirm = async (e) => {
     e.preventDefault();
     if (!form.checkIn || !form.checkOut || !form.guests || !form.rooms || !form.roomType) {
       alert("Please fill all booking details.");
       return;
     }
-    setSuccess(true);
+    setLoading(true);
+    try {
+      const res = await API.post("/bookings/create", {
+        eventDate: form.checkIn,
+        durationHours: Number(form.rooms),
+        serviceName: selectedHotel.name,
+        serviceType: "Tourism",
+        totalAmount: total,
+      });
+      if (res.data?.success) {
+        setSuccess(true);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || "Failed to book tourism service.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -139,8 +156,8 @@ export default function TouristConfirm() {
               <strong>₹{total.toLocaleString()}</strong>
             </div>
 
-            <button className="tourist-gold-btn tourist-full-btn" type="submit" form="tourist-confirm-form">
-              CONFIRM BOOKING
+            <button className="tourist-gold-btn tourist-full-btn" type="submit" form="tourist-confirm-form" disabled={loading}>
+              {loading ? "BOOKING..." : "CONFIRM BOOKING"}
             </button>
           </aside>
         </div>

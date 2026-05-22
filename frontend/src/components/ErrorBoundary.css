@@ -1,0 +1,181 @@
+.error-boundary-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #080808;
+}
+
+.error-boundary-card {
+  background: #141414;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 18px;
+  padding: 40px;
+  max-width: 540px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.03);
+  animation: errorFadeIn 0.3s ease-out;
+}
+
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.error-icon {
+  color: #ff5050;
+}
+
+.error-title {
+  font-family: "Cinzel", serif;
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  background: linear-gradient(180deg, #f5d86b 0%, #d4af37 46%, #9d721c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.error-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 32px;
+  font-family: "Inter", sans-serif;
+}
+
+.error-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.error-reset-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #bb9122 0%, #ebc84e 52%, #be9227 100%);
+  color: #080808;
+  font-family: "Cinzel", serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.error-reset-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+}
+
+.error-details-container {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 16px;
+  text-align: left;
+}
+
+.error-details-toggle {
+  background: transparent;
+  border: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: "Inter", sans-serif;
+  transition: color 0.2s;
+}
+
+.error-details-toggle:hover {
+  color: #d4af37;
+}
+
+.error-details-content {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.error-message {
+  color: #ff5050;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  margin: 0 0 10px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.error-stack {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: monospace;
+  font-size: 11px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* Custom Scrollbar for Diagnostics */
+.error-details-content::-webkit-scrollbar {
+  width: 6px;
+}
+.error-details-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.error-details-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+.error-details-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.3);
+}
+
+@media (max-width: 600px) {
+  .error-boundary-card {
+    padding: 24px 20px;
+  }
+  .error-title {
+    font-size: 20px;
+  }
+}

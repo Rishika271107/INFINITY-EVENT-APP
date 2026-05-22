@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import FoodSuccessModal from "./FoodSuccessModal";
 
 import "./FoodCheckout.css";
+import API from "../services/api";
 
 function FoodCheckout() {
   const location = useLocation();
@@ -17,6 +18,7 @@ function FoodCheckout() {
   } = location.state || {};
 
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [guests, setGuests] = useState(1);
 
@@ -85,7 +87,32 @@ function FoodCheckout() {
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
+           disabled={loading}
+           onClick={async () => {
+             if (guests < 1) {
+               alert("Please specify number of guests.");
+               return;
+             }
+             setLoading(true);
+             try {
+               const res = await API.post("/bookings/create", {
+                 eventDate: new Date().toISOString(),
+                 durationHours: guests,
+                 serviceName: hotel?.name || "Food Service",
+                 serviceType: "Food",
+                 totalAmount: grandTotal,
+               });
+               if (res.data?.success) {
+                 setShowModal(true);
+               } else {
+                 alert(res.data?.message || "Booking failed");
+               }
+             } catch (err) {
+               alert(err.response?.data?.message || err.message || "Failed to book food service.");
+             } finally {
+               setLoading(false);
+             }
+           }}
         >
           Book Now
         </button>

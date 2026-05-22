@@ -18,7 +18,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors());
+app.use(cors(require('./config/corsOptions')));
 
 app.use(helmet());
 
@@ -55,10 +55,25 @@ app.use(
   require("./routes/adminRoutes")
 );
 
-app.use(
-  "/api/payment",
+app.use("/api/payment",
   require("./routes/paymentRoutes")
 );
+
+app.use("/api/venues",
+  require("./routes/venueRoutes")
+);
+
+app.use("/api/budgets",
+  require("./routes/budgetRoutes")
+);
+
+app.use("/api/reminders",
+  require("./routes/reminderRoutes")
+);
+
+// Error handling middleware (must be after all routes)
+const { errorHandler } = require("./middleware/errorMiddleware");
+app.use(errorHandler);
 
 
 
