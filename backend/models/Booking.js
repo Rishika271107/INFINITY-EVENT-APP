@@ -5,33 +5,40 @@ const bookingSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
-    // Reference to the booked venue
     venue: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Venue",
-      required: false
     },
-    // Optional legacy fields retained for backward compatibility
     serviceName: { type: String },
     serviceType: { type: String },
-    // New explicit booking details
-    residentialArea: { type: String, required: false },
     eventDate: { type: Date, required: true },
-    startTime: { type: String },
-    durationHours: { type: Number, default: 1 },
-    guestCount: { type: Number, required: false },
     totalAmount: { type: Number, required: true },
-    // Status fields
-    bookingStatus: { type: String, enum: ["pending", "confirmed", "cancelled", "failed"], default: "pending" },
-    paymentStatus: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
-    // Razorpay integration fields
-    razorpay_order_id: { type: String },
-    razorpay_payment_id: { type: String },
-    razorpay_signature: { type: String }
+    bookingDetails: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+    // Booking lifecycle status – default pending (manual admin confirmation later)
+    bookingStatus: {
+      type: String,
+      enum: ["pending", "confirmed", "cancelled", "completed"],
+      default: "pending",
+    },
+    // Payment status kept for future extensions but defaults to pending (no auto‑payment)
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed", "refunded"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
+
+// Indexes for efficient queries
+bookingSchema.index({ user: 1 });
+bookingSchema.index({ bookingStatus: 1 });
+bookingSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

@@ -1,26 +1,29 @@
 import { useMemo, useState } from "react";
 import API from "../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useRazorpay } from "../hooks/useRazorpay";
+import { FormProvider } from "../components/forms/FormProvider";
+import { InputField } from "../components/forms/InputField";
+import { makeupConfirmSchema } from "../utils/validationSchemas";
 import "./MakeupFlow.css";
+
+const DASHBOARD_PATH = "/user/dashboard";
 
 function ConfettiBurst() {
   const [pieces] = useState(() =>
-    Array.from({ length: 75 }).map((_, i) => ({
+    Array.from({ length: 60 }).map((_, i) => ({
       left: `${Math.random() * 100}%`,
       animationDelay: `${Math.random() * 1.2}s`,
-      animationDuration: `${2.7 + Math.random() * 2.1}s`,
+      animationDuration: `${2.8 + Math.random() * 2.2}s`,
       background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
     }))
   );
 
   return (
-    <div className="makeup-confetti-wrap" aria-hidden="true">
+    <div className="confetti-wrap" aria-hidden="true">
       {pieces.map((piece, i) => (
-        <span
-          key={i}
-          className="makeup-confetti"
-          style={piece}
-        />
+        <span key={i} className="confetti" style={piece} />
       ))}
     </div>
   );
@@ -31,63 +34,54 @@ export default function MakeupConfirm() {
   const location = useLocation();
   const selectedProvider = location.state?.selectedProvider;
 
-  const [form, setForm] = useState({
-    date: "",
-    time: "",
-    gender: "Female",
-    occasion: "",
-    venueAddress: "",
-    duration: 2,
-  });
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [duration, setDuration] = useState(2);
+  const { user } = useAuth();
+  const { initiatePayment, renderToast } = useRazorpay();
 
   const total = useMemo(() => {
     if (!selectedProvider) return 0;
-    return Number(selectedProvider.pricePerHr) * Number(form.duration || 0);
-  }, [selectedProvider, form.duration]);
+    return Number(selectedProvider.pricePerHr) * Number(duration || 0);
+  }, [selectedProvider, duration]);
 
   if (!selectedProvider) {
     return (
       <div className="makeup-page">
         <div className="makeup-container">
           <p className="makeup-empty-text">Please select a makeup provider first.</p>
-          <button className="makeup-gold-btn" type="button" onClick={() => navigate("/services/makeup")}>
-            Go to Makeup Services
-          </button>
+          <button className="makeup-gold-btn" type="button" onClick={() => navigate("/services/makeup")}>Go to Makeup Services</button>
         </div>
       </div>
     );
   }
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const onConfirm = async (e) => {
-    e.preventDefault();
-    if (!form.date || !form.time || !form.gender || !form.occasion || !form.venueAddress || !form.duration) {
-      alert("Please fill all booking details.");
-      return;
-    }
-    setLoading(true);
+  const onSubmit = async (data) => {
+    const totalAmount = Number(selectedProvider.pricePerHr) * Number(data.duration);
     try {
       const res = await API.post("/bookings/create", {
-        eventDate: form.date,
-        durationHours: Number(form.duration),
+        eventDate: data.date,
         serviceName: selectedProvider.name,
         serviceType: "Makeup",
-        totalAmount: total,
+        totalAmount,
+        bookingDetails: {
+          durationHours: Number(data.duration),
+          time: data.time,
+          venueAddress: data.venueAddress
+        }
       });
       if (res.data?.success) {
-        setSuccess(true);
+        const bookingData = res.data.data.booking;
+        await initiatePayment(bookingData._id, user, (verifyRes) => {
+          navigate("/booking-success", { state: { booking: verifyRes.booking || bookingData } });
+        });
       }
     } catch (err) {
       alert(err.response?.data?.message || err.message || "Failed to book makeup service.");
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const goDashboard = () => {
+    setSuccess(false);
+    navigate(DASHBOARD_PATH, { replace: true });
   };
 
   return (
@@ -96,62 +90,22 @@ export default function MakeupConfirm() {
         <button className="makeup-back-btn" type="button" onClick={() => navigate(-1)}>
           ← BACK
         </button>
-
         <h1 className="makeup-title">Confirm Booking</h1>
         <p className="makeup-subtitle">
           {selectedProvider.name.toUpperCase()} — {selectedProvider.city}
         </p>
-
         <div className="makeup-confirm-layout">
-          <form id="makeup-confirm-form" className="makeup-form-card makeup-form-grid" onSubmit={onConfirm}>
-            <div className="makeup-field">
-              <label>Date</label>
-              <input type="date" name="date" value={form.date} onChange={onChange} />
+          <FormProvider schema={makeupConfirmSchema} onSubmit={onSubmit} defaultValues={{ date: "", time: "", venueAddress: "", duration: 2 }}>
+            <div className="makeup-form-card makeup-form-grid">
+              <InputField name="date" label="Date" type="date" />
+              <InputField name="time" label="Time" type="time" />
+              <InputField name="venueAddress" label="Venue Address" type="text" placeholder="Enter address" />
+              <InputField name="duration" label="Duration (Hours)" type="number" min={1} onChange={(e) => setDuration(e.target.value)} />
+              <button className="makeup-gold-btn makeup-full-btn" type="submit">
+                CONFIRM BOOKING
+              </button>
             </div>
-
-            <div className="makeup-field">
-              <label>Time</label>
-              <input type="time" name="time" value={form.time} onChange={onChange} />
-            </div>
-
-            <div className="makeup-field">
-              <label>Gender</label>
-              <select name="gender" value={form.gender} onChange={onChange}>
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div className="makeup-field">
-              <label>Occasion</label>
-              <select name="occasion" value={form.occasion} onChange={onChange}>
-                <option value="">Select occasion</option>
-                <option value="Wedding">Wedding</option>
-                <option value="Reception">Reception</option>
-                <option value="Engagement">Engagement</option>
-                <option value="Party">Party</option>
-                <option value="Photoshoot">Photoshoot</option>
-              </select>
-            </div>
-
-            <div className="makeup-field">
-              <label>Venue Address</label>
-              <input
-                type="text"
-                name="venueAddress"
-                placeholder="Enter address"
-                value={form.venueAddress}
-                onChange={onChange}
-              />
-            </div>
-
-            <div className="makeup-field">
-              <label>Duration (Hours)</label>
-              <input type="number" name="duration" min="1" value={form.duration} onChange={onChange} />
-            </div>
-          </form>
-
+          </FormProvider>
           <aside className="makeup-summary-card">
             <h3>PRICE SUMMARY</h3>
             <div className="makeup-summary-row">
@@ -160,33 +114,16 @@ export default function MakeupConfirm() {
             </div>
             <div className="makeup-summary-row">
               <span>Hours</span>
-              <strong>{form.duration}</strong>
+              <strong>{duration}</strong>
             </div>
             <div className="makeup-summary-row total">
               <span>TOTAL</span>
               <strong>₹{total.toLocaleString()}</strong>
             </div>
-
-            <button className="makeup-gold-btn makeup-full-btn" type="submit" form="makeup-confirm-form">
-              CONFIRM BOOKING
-            </button>
           </aside>
         </div>
       </div>
-
-      {success && (
-        <div className="makeup-modal-backdrop">
-          <ConfettiBurst />
-          <div className="makeup-success-modal">
-            <div className="makeup-popup-icon">✓</div>
-            <h2>Congratulations!</h2>
-            <p>Your makeup booking has been confirmed successfully.</p>
-            <button className="makeup-gold-btn makeup-modal-btn" type="button" onClick={() => navigate("/user/dashboard")}>
-              OKAY
-            </button>
-          </div>
-        </div>
-      )}
+      {renderToast()}
     </div>
   );
 }

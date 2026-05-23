@@ -1,0 +1,14 @@
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 01:02:10"}
+{"level":"info","message":"::1 - - [23/May/2026:19:32:19 +0000] \"OPTIONS /api/auth/me HTTP/1.1\" 204 0 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-05-24 01:02:19"}
+{"level":"info","message":"::1 - - [23/May/2026:19:32:19 +0000] \"OPTIONS /api/auth/me HTTP/1.1\" 204 0 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-05-24 01:02:19"}
+{"level":"info","message":"::1 - - [23/May/2026:19:32:19 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-05-24 01:02:19"}
+{"level":"info","message":"::1 - - [23/May/2026:19:32:19 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-05-24 01:02:19"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 01:33:08"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 01:33:23"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 01:33:42"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 01:43:10"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 02:34:00"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 03:23:11"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 03:26:20"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 03:28:25"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-24 03:34:12"}

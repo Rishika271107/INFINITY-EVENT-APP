@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Confetti from "react-confetti";
 import "./BookingSuccess.css";
 
 function BookingSuccess() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract booking details safely, fallback to default message if accessed directly
+  const bookingData = location.state?.booking || null;
+  const serviceName = bookingData?.serviceName || "Your service";
 
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
@@ -33,10 +38,13 @@ function BookingSuccess() {
 
           <h1>Booking Confirmed!</h1>
 
-          <p>Congratulations! Your booking has been successfully completed.</p>
+          <p>Congratulations! {serviceName} has been successfully booked.</p>
+          {bookingData?.totalAmount && (
+            <p>Total Amount: ₹{bookingData.totalAmount.toLocaleString()}</p>
+          )}
 
           <button className="popup-btn" onClick={() => navigate("/user/dashboard")}>
-            Thank You! 
+            Back to Dashboard
           </button>
         </div>
       </div>
@@ -45,19 +53,19 @@ function BookingSuccess() {
         width={dimensions.width}
         height={dimensions.height}
         numberOfPieces={350}
-        recycle={true}
+        recycle={false}
         gravity={0.18}
         initialVelocityY={12}
         style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: 9999,
-        pointerEvents: "none",
-      }}
-/>
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 9999,
+          pointerEvents: "none",
+        }}
+      />
     </div>
   );
 }

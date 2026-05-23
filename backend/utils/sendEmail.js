@@ -5,6 +5,10 @@ const nodemailer = require("nodemailer");
  * Using service: "gmail" for automated configuration and reliability.
  */
 const sendEmail = async (email, subject, text, otp = null) => {
+  if (process.env.NODE_ENV === 'test') {
+    console.log(`[TEST] sendEmail to ${email} bypassed in test environment`);
+    return { messageId: 'test-message-id' };
+  }
   try {
     console.log(`\n📧 ATTEMPTING EMAIL DELIVERY...`);
     console.log(`   Recipient: ${email}`);

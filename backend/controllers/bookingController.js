@@ -14,14 +14,11 @@ exports.createBooking = asyncHandler(async (req, res, next) => {
 
   const {
     venueId,
-    residentialArea,
     eventDate,
-    startTime,
-    durationHours,
-    guestCount,
     serviceName,
     serviceType,
     totalAmount: bodyTotalAmount,
+    bookingDetails
   } = req.body;
 
   // ----- 1️⃣ Validation based on service type -----
@@ -35,11 +32,11 @@ exports.createBooking = asyncHandler(async (req, res, next) => {
   let finalVenueId = null;
 
   if (isVenueBooking) {
-    if (!venueId || !residentialArea || !startTime || !durationHours || !guestCount) {
+    if (!venueId || !bookingDetails) {
       return next(
         new ApiError(
           400,
-          'All booking fields (venueId, residentialArea, eventDate, startTime, durationHours, guestCount) are required for venue bookings.'
+          'All booking fields (venueId, eventDate, bookingDetails) are required for venue bookings.'
         )
       );
     }
@@ -48,7 +45,8 @@ exports.createBooking = asyncHandler(async (req, res, next) => {
     if (!venueObj) {
       return next(new ApiError(404, 'Venue not found.'));
     }
-    totalAmount = Number(venueObj.price) * Number(durationHours);
+    const duration = bookingDetails?.durationHours ? Number(bookingDetails.durationHours) : 1;
+    totalAmount = Number(venueObj.price) * duration;
     finalVenueId = venueId;
   } else {
     // Service booking
@@ -74,14 +72,11 @@ exports.createBooking = asyncHandler(async (req, res, next) => {
     venue: finalVenueId,
     serviceName: serviceName || (isVenueBooking ? 'Venue Booking' : undefined),
     serviceType: serviceType || 'venue',
-    residentialArea: residentialArea || '',
     eventDate,
-    startTime: startTime || '',
-    durationHours: durationHours ? Number(durationHours) : 1,
-    guestCount: guestCount ? Number(guestCount) : 0,
     totalAmount,
-    paymentStatus: 'confirmed', // Auto-confirm/paid since Razorpay checkout is bypassed/stubbed
-    bookingStatus: 'confirmed', // Auto-confirm/paid since Razorpay checkout is bypassed/stubbed
+    bookingDetails: bookingDetails || {},
+    paymentStatus: 'pending', // Payments disabled
+    bookingStatus: 'confirmed' // Directly confirmed without payment
   });
 
   console.info('✅ BOOKING SAVED →', {

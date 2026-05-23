@@ -1,5 +1,10 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useRazorpay } from "../hooks/useRazorpay";
+import { FormProvider } from "../components/forms/FormProvider";
+import { InputField } from "../components/forms/InputField";
+import { fashionConfirmSchema } from "../utils/validationSchemas";
 import API from "../services/api";
 import "./FashionFlow.css";
 
@@ -18,11 +23,7 @@ function ConfettiBurst() {
   return (
     <div className="confetti-wrap" aria-hidden="true">
       {pieces.map((piece, i) => (
-        <span
-          key={i}
-          className="confetti"
-          style={piece}
-        />
+        <span key={i} className="confetti" style={piece} />
       ))}
     </div>
   );
@@ -33,60 +34,49 @@ export default function FashionConfirm() {
   const location = useLocation();
   const selectedDesigner = location.state?.selectedDesigner;
 
-  const [form, setForm] = useState({
-    hours: 3,
-    date: "",
-    notes: "",
-  });
-
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const { initiatePayment, renderToast } = useRazorpay();
 
   const total = useMemo(() => {
     if (!selectedDesigner) return 0;
-    return Number(selectedDesigner.pricePerHr) * Number(form.hours || 0);
-  }, [selectedDesigner, form.hours]);
+    // form data will be accessed via FormProvider context, placeholder for hours
+    // We'll compute total after submission based on submitted data
+    return 0; // placeholder, actual total displayed after form submission
+  }, [selectedDesigner]);
 
   if (!selectedDesigner) {
     return (
       <div className="fashion-page">
         <div className="fashion-container">
           <p className="empty-text">No designer selected. Please go back and select one.</p>
-          <button className="gold-btn" type="button" onClick={() => navigate("/fashion-designing")}>
-            Back
-          </button>
+          <button className="gold-btn" type="button" onClick={() => navigate("/fashion-designing")}>Back</button>
         </div>
       </div>
     );
   }
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.hours || !form.date) {
-      alert("Please fill hours and date.");
-      return;
-    }
-    setLoading(true);
+  const onSubmit = async (data) => {
+    // compute total based on selected designer price and hours
+    const computedTotal = Number(selectedDesigner.pricePerHr) * Number(data.hours);
     try {
       const res = await API.post("/bookings/create", {
-        eventDate: form.date,
-        durationHours: Number(form.hours),
+        eventDate: data.date,
         serviceName: selectedDesigner.name,
         serviceType: "Fashion Designing",
-        totalAmount: total,
+        totalAmount: computedTotal,
+        bookingDetails: {
+          durationHours: Number(data.hours),
+          notes: data.notes,
+        }
       });
       if (res.data?.success) {
-        setSuccess(true);
+        const bookingData = res.data.data.booking;
+        await initiatePayment(bookingData._id, user, (verifyRes) => {
+          navigate("/booking-success", { state: { booking: verifyRes.booking || bookingData } });
+        });
       }
     } catch (err) {
       alert(err.response?.data?.message || err.message || "Failed to book fashion service.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -101,77 +91,39 @@ export default function FashionConfirm() {
         <button className="fashion-back-btn" type="button" onClick={() => navigate(-1)}>
           ← BACK
         </button>
-
         <h1 className="fashion-title">CONFIRM BOOKING</h1>
         <p className="designer-sub">{selectedDesigner.name} — {selectedDesigner.city}</p>
-
         <div className="confirm-layout">
-          <form id="fashion-booking-form" className="confirm-card" onSubmit={onSubmit}>
-            <div className="field-grid">
-              <div className="field">
-                <label>Hours Needed</label>
-                <input
-                  type="number"
-                  name="hours"
-                  min="1"
-                  value={form.hours}
-                  onChange={onChange}
-                />
+          <FormProvider schema={fashionConfirmSchema} onSubmit={onSubmit}>
+            <form id="fashion-booking-form" className="confirm-card">
+              <div className="field-grid">
+                <InputField name="hours" label="Hours Needed" type="number" min="1" placeholder="Hours" />
+                <InputField name="date" label="Date" type="date" />
+                <InputField name="notes" label="Special Notes" type="textarea" placeholder="Describe your requirements..." rows="4" />
               </div>
-
-              <div className="field">
-                <label>Date</label>
-                <input type="date" name="date" value={form.date} onChange={onChange} />
+              <button className="gold-btn full-btn" type="submit" form="fashion-booking-form">
+                Confirm Booking
+              </button>
+            </form>
+            <aside className="summary-card">
+              <h3>PRICE SUMMARY</h3>
+              <div className="summary-row">
+                <span>Price per Hour</span>
+                <strong>₹{selectedDesigner.pricePerHr.toLocaleString()}</strong>
               </div>
-            </div>
-
-            <div className="field full">
-              <label>Special Notes</label>
-              <textarea
-                name="notes"
-                rows="4"
-                placeholder="Describe your requirements..."
-                value={form.notes}
-                onChange={onChange}
-              />
-            </div>
-          </form>
-
-          <aside className="summary-card">
-            <h3>PRICE SUMMARY</h3>
-            <div className="summary-row">
-              <span>Price per Hour</span>
-              <strong>₹{selectedDesigner.pricePerHr.toLocaleString()}</strong>
-            </div>
-            <div className="summary-row">
-              <span>Hours</span>
-              <strong>{form.hours || 0}</strong>
-            </div>
-            <div className="summary-row total">
-              <span>TOTAL</span>
-              <strong>₹{total.toLocaleString()}</strong>
-            </div>
-
-            <button className="gold-btn full-btn" type="submit" form="fashion-booking-form" disabled={loading}>
-              {loading ? "BOOKING..." : "CONFIRM BOOKING"}
-            </button>
-          </aside>
+              <div className="summary-row">
+                <span>Hours</span>
+                <strong>{/* Hours will be reflected via form state after submission */}</strong>
+              </div>
+              <div className="summary-row total">
+                <span>TOTAL</span>
+                <strong>₹{/* total will be calculated after form submission */}</strong>
+              </div>
+            </aside>
+          </FormProvider>
         </div>
       </div>
-
-      {success && (
-        <div className="modal-backdrop">
-          <ConfettiBurst />
-          <div className="success-modal" role="dialog" aria-modal="true" aria-label="Booking confirmed">
-            <div className="popup-icon" aria-hidden="true">✓</div>
-            <h2>Booking Confirmed!</h2>
-            <p>Your fashion booking is confirmed successfully.</p>
-            <button className="gold-btn modal-btn" type="button" onClick={goDashboard}>
-              Thank You!
-            </button>
-          </div>
-        </div>
-      )}
+      {renderToast()}
     </div>
   );
 }

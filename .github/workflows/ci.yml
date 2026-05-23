@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Lint backend
+        working-directory: ./backend
+        run: npm run lint
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: npm test
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Build backend Docker image
+        run: |
+          docker build -t infinity-grand-events-backend ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          docker build -t infinity-grand-events-frontend ./frontend
+
+      - name: Upload artifact logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: |
+            backend/logs/**
+            frontend/logs/**

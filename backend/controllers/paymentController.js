@@ -348,7 +348,7 @@ exports.refundPayment = async (req, res) => {
 
     // Update status in local database
     booking.bookingStatus = "cancelled";
-    booking.paymentStatus = "pending"; // Represents unpaid/refunded status now
+    booking.paymentStatus = "refunded"; // Proper refund lifecycle status
     await booking.save();
 
     await Transaction.create({

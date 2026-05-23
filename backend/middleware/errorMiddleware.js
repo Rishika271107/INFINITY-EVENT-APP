@@ -1,28 +1,19 @@
-/**
- * Centralized error handling middleware for Express.
- * Captures errors thrown in async handlers or synchronous routes and
- * returns a consistent JSON response.
- */
+// backend/middleware/errorMiddleware.js – Centralized error handling
+// ----------------------------------------------------------
+// This middleware catches errors from async handlers and sends a consistent JSON response.
+// It hides stack traces in production for security.
+
 const errorHandler = (err, req, res, next) => {
   // Default to 500 if statusCode not set
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+  res.status(statusCode);
 
-  // Log the error for debugging (could be enhanced with a logger)
-  console.error(`❌ [ERROR] ${statusCode} - ${message}`);
-  if (err.stack) console.error(err.stack);
-
-  const response = {
+  res.json({
     success: false,
-    message,
-  };
-
-  // Include stack trace only in non‑production environments for security
-  if (process.env.NODE_ENV !== 'production') {
-    response.stack = err.stack;
-  }
-
-  res.status(statusCode).json(response);
+    message: err.message || 'Server Error',
+    // In production hide stack trace
+    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+  });
 };
 
 module.exports = { errorHandler };

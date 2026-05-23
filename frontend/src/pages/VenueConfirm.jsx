@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import API from "../services/api";
+import { createBooking, normalizeBookingPayload, handleBookingSuccess, handleBookingError } from "../services/bookingService";
 import { useAuth } from "../context/AuthContext";
 
+import LoadingButton from "../components/async/LoadingButton";
 import "./VenueFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard"; // keep this same as your Route path
@@ -48,8 +49,7 @@ export default function VenueConfirm() {
 
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const paymentLoading = false;
-const renderToast = () => null;
+
 
   const total = useMemo(
     () => {
@@ -95,22 +95,25 @@ const renderToast = () => null;
 
     setLoading(true);
     try {
-      // Step 1: Create a Pending Booking record first (Enterprise Flow)
-      const bookingResponse = await API.post("/bookings/create", {
-        venueId: selectedVenue._id,
-        residentialArea: form.area,
+      const payload = normalizeBookingPayload({
+        serviceName: selectedVenue.name,
+        serviceType: "Venue",
+        totalAmount: total,
         eventDate: form.eventDate,
-        startTime: form.time,
-        durationHours: form.duration,
-        guestCount: form.guestCount
+        bookingDetails: {
+          venueType: selectedVenue.type,
+          seatingCapacity: Number(form.guestCount),
+          eventDuration: Number(form.duration),
+          specialRequirements: form.area || "",
+        },
       });
+      const res = await createBooking(payload);
 
-      if (bookingResponse.data.success) {
-        // Directly mark success as payment is disabled for now
-        setSuccess(true);
+      if (res.data?.success) {
+        handleBookingSuccess(navigate, res.data.data.booking);
       }
     } catch (err) {
-      alert(err.response?.data?.message || err.message || "Failed to confirm event booking details.");
+      handleBookingError(err);
     } finally {
       setLoading(false);
     }
@@ -189,27 +192,14 @@ const renderToast = () => null;
               <strong>₹{total.toLocaleString()}</strong>
             </div>
 
-            <button className="gold-btn full-btn" type="submit" form="venue-confirm-form" disabled={loading || paymentLoading}>
-              {loading || paymentLoading ? "PROCESSING..." : "CONFIRM BOOKING"}
-            </button>
+            <LoadingButton className="gold-btn full-btn" type="submit" form="venue-confirm-form" disabled={loading}>
+              {loading ? "PROCESSING..." : "CONFIRM BOOKING"}
+            </LoadingButton>
           </div>
         </div>
       </div>
 
-  {success && (
-  <div className="modal-backdrop">
-    <ConfettiBurst />
-    <div className="success-modal" role="dialog" aria-modal="true" aria-label="Booking confirmed">
-      <div className="popup-icon" aria-hidden="true">✓</div>
-      <h2>Booking Confirmed!</h2>
-      <p>Your venue has been booked successfully.</p>
-      <button className="gold-btn modal-btn" type="button" onClick={goToDashboard}>
-        Thank You!
-      </button>
-    </div>
-  </div>
-)}
-      {renderToast()}
+
     </div>
   );
 }

@@ -8,6 +8,12 @@
   box-sizing: border-box;
 }
 
+.checkout-page form {
+  width: 100%;
+  display: flex;
+  gap: 35px;
+}
+
 /* FORM SECTION */
 
 .checkout-form {
@@ -135,8 +141,11 @@
 
 @media (max-width: 950px) {
   .checkout-page {
-    flex-direction: column;
     padding: 20px;
+  }
+  
+  .checkout-page form {
+    flex-direction: column;
   }
 
   .summary-card {

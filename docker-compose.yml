@@ -1,0 +1,24 @@
+# Docker Compose configuration (version omitted)
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:6.0
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:

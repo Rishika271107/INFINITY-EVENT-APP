@@ -1,95 +1,80 @@
 import { useMemo, useState } from "react";
-import API from "../services/api";
+import { useBookingSubmission } from "../hooks/useBookingSubmission";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import LoadingButton from "../components/async/LoadingButton";
+import { FormProvider } from "../components/forms/FormProvider";
+import { InputField } from "../components/forms/InputField";
+import { photographySchema } from "../utils/validationSchemas";
 import "./PhotographyFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard";
 
 function ConfettiBurst() {
   const [pieces] = useState(() =>
-    Array.from({ length: 80 }).map((_, i) => ({
+    Array.from({ length: 60 }).map((_, i) => ({
       left: `${Math.random() * 100}%`,
       animationDelay: `${Math.random() * 1.2}s`,
-      animationDuration: `${2.8 + Math.random() * 2.1}s`,
+      animationDuration: `${2.8 + Math.random() * 2.2}s`,
       background: ["#f7d365", "#d7a924", "#f0c649", "#ffffff"][i % 4],
     }))
   );
-
   return (
-    <div className="photo-confetti-wrap" aria-hidden="true">
+    <div className="confetti-wrap" aria-hidden="true">
       {pieces.map((piece, i) => (
-        <span
-          key={i}
-          className="photo-confetti"
-          style={piece}
-        />
+        <span key={i} className="confetti" style={piece} />
       ))}
     </div>
   );
 }
 
 export default function PhotographyConfirm() {
+  const { submitBooking, loading, error } = useBookingSubmission();
   const navigate = useNavigate();
   const location = useLocation();
-
   const selectedPhotographer = location.state?.selectedPhotographer;
   const photographyRequest = location.state?.photographyRequest || {};
 
-  const [form, setForm] = useState({
-    hours: 2,
-    date: photographyRequest.date || "",
-    locationName: "",
-    shootType: photographyRequest.eventType || "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [hours, setHours] = useState(2);
+  const { user } = useAuth();
+  // Loading handled by useBookingSubmission
+  
 
   const total = useMemo(() => {
     if (!selectedPhotographer) return 0;
-    return Number(selectedPhotographer.pricePerHr) * Number(form.hours || 0);
-  }, [selectedPhotographer, form.hours]);
+    return Number(selectedPhotographer.pricePerHr) * Number(hours || 0);
+  }, [selectedPhotographer, hours]);
 
   if (!selectedPhotographer) {
     return (
       <div className="photo-flow-page">
         <div className="photo-flow-container">
           <p className="photo-empty-text">No photographer selected. Please select one first.</p>
-          <button className="photo-gold-btn" type="button" onClick={() => navigate("/services/photography/select")}>
-            Go to Photographer List
-          </button>
+          <button className="photo-gold-btn" type="button" onClick={() => navigate("/services/photography/select")}>Go to Photographer List</button>
         </div>
       </div>
     );
   }
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  const onSubmit = async (data) => {
+    const totalAmount = Number(selectedPhotographer.pricePerHr) * Number(data.hours);
+    const payload = {
+      serviceName: selectedPhotographer.name,
+      serviceType: "Photography",
+      eventDate: data.date,
+      totalAmount,
+      bookingDetails: {
+        shootType: data.shootType,
+        hours: Number(data.hours),
+        locationName: data.locationName,
+        notes: data.notes || "",
+      },
+    };
+    await submitBooking(payload);
   };
 
-  const onConfirm = async (e) => {
-    e.preventDefault();
-    if (!form.hours || !form.date || !form.locationName || !form.shootType) {
-      alert("Please fill all booking details.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await API.post("/bookings/create", {
-        eventDate: form.date,
-        durationHours: Number(form.hours),
-        serviceName: selectedPhotographer.name,
-        serviceType: "Photography",
-        totalAmount: total,
-      });
-      if (res.data?.success) {
-        setSuccess(true);
-      }
-    } catch (err) {
-      alert(err.response?.data?.message || err.message || "Failed to book photography service.");
-    } finally {
-      setLoading(false);
-    }
+  const goDashboard = () => {
+    navigate(DASHBOARD_PATH, { replace: true });
   };
 
   return (
@@ -98,56 +83,49 @@ export default function PhotographyConfirm() {
         <button className="photo-back-btn" type="button" onClick={() => navigate(-1)}>
           ← BACK
         </button>
-
-        <div className="photo-stepper">
-          <div className="photo-step done">1</div>
-          <div className="photo-line active" />
-          <div className="photo-step done">2</div>
-          <div className="photo-line active" />
-          <div className="photo-step active">3</div>
-        </div>
-
         <h1 className="photo-title">Confirm Booking</h1>
         <p className="photo-subtitle">
-          {selectedPhotographer.name} - {selectedPhotographer.city}
+          {selectedPhotographer.name} — {selectedPhotographer.city}
         </p>
-
         <div className="photo-confirm-layout">
-          <form id="photo-confirm-form" className="photo-details-card photo-details-grid" onSubmit={onConfirm}>
-            <div className="photo-field">
-              <label>Number of Hours</label>
-              <input type="number" min="1" name="hours" value={form.hours} onChange={onChange} />
-            </div>
-
-            <div className="photo-field">
-              <label>Date</label>
-              <input type="date" name="date" value={form.date} onChange={onChange} />
-            </div>
-
-            <div className="photo-field">
-              <label>Location</label>
-              <input
-                type="text"
-                name="locationName"
-                placeholder="Enter location"
-                value={form.locationName}
-                onChange={onChange}
+          <FormProvider
+            schema={photographySchema}
+            onSubmit={onSubmit}
+            defaultValues={{
+              hours: 2,
+              date: photographyRequest.date || "",
+              locationName: "",
+              shootType: photographyRequest.eventType || "",
+            }}
+          >
+            <div className="photo-details-card photo-details-grid">
+              <InputField
+                name="hours"
+                label="Number of Hours"
+                type="number"
+                min={1}
+                onChange={(e) => setHours(Number(e.target.value))}
               />
+              <InputField name="date" label="Date" type="date" />
+              <InputField name="locationName" label="Location" type="text" placeholder="Enter location" />
+              <InputField
+                name="shootType"
+                label="Shoot Type"
+                type="select"
+                options={[
+                  { value: "", label: "Select type" },
+                  { value: "Wedding", label: "Wedding" },
+                  { value: "Pre-wedding", label: "Pre-wedding" },
+                  { value: "Engagement", label: "Engagement" },
+                  { value: "Birthday", label: "Birthday" },
+                  { value: "Corporate", label: "Corporate" },
+                ]}
+              />
+              <LoadingButton className="photo-gold-btn photo-full-btn" type="submit" disabled={loading}>
+                CONFIRM BOOKING
+              </LoadingButton>
             </div>
-
-            <div className="photo-field">
-              <label>Shoot Type</label>
-              <select name="shootType" value={form.shootType} onChange={onChange}>
-                <option value="">Select type</option>
-                <option value="Wedding">Wedding</option>
-                <option value="Pre-wedding">Pre-wedding</option>
-                <option value="Engagement">Engagement</option>
-                <option value="Birthday">Birthday</option>
-                <option value="Corporate">Corporate</option>
-              </select>
-            </div>
-          </form>
-
+          </FormProvider>
           <aside className="photo-summary-card">
             <h3>PRICE SUMMARY</h3>
             <div className="photo-summary-row">
@@ -156,33 +134,16 @@ export default function PhotographyConfirm() {
             </div>
             <div className="photo-summary-row">
               <span>Hours</span>
-              <strong>{form.hours || 0}</strong>
+              <strong>{hours}</strong>
             </div>
             <div className="photo-summary-row total">
               <span>TOTAL</span>
               <strong>₹{total.toLocaleString()}</strong>
             </div>
-
-            <button className="photo-gold-btn photo-full-btn" type="submit" form="photo-confirm-form">
-              CONFIRM BOOKING
-            </button>
           </aside>
         </div>
       </div>
-
-      {success && (
-        <div className="photo-modal-backdrop">
-          <ConfettiBurst />
-          <div className="photo-success-modal">
-            <div className="photo-popup-icon">✓</div>
-            <h2>Booking Confirmed!</h2>
-            <p>Your photography booking has been confirmed successfully.</p>
-            <button className="photo-gold-btn photo-modal-btn" type="button" onClick={() => navigate(DASHBOARD_PATH)}>
-              Thank You!
-            </button>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }

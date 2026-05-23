@@ -41,7 +41,21 @@ exports.registerUser = async (req, res) => {
   console.log("DEBUG: REGISTER REQUEST BODY:", req.body);
   try {
     let { username, email, phone, password } = req.body;
+    
+    if (!username || !email || !phone || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     email = email.trim().toLowerCase();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+    }
 
     let user = await User.findOne({ email });
 
@@ -87,24 +101,38 @@ exports.registerUser = async (req, res) => {
 
 // ─── LOGIN USER ────────────────────────────────────────────
 exports.loginUser = async (req, res) => {
-  console.log("DEBUG: LOGIN REQUEST BODY:", req.body);
   try {
     let { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
     email = email.trim().toLowerCase();
     const user = await User.findOne({ email });
 
     if (!user) {
+      // Track failed attempt
+      if (typeof req.trackLoginFailure === 'function') req.trackLoginFailure();
       return res.status(400).json({ message: "Account not found. Please sign up." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      if (typeof req.trackLoginFailure === 'function') req.trackLoginFailure();
       return res.status(400).json({ message: "Invalid email or password." });
     }
 
-    // Direct Login without OTP
-    const token = generateToken(user._id);
-    
+    if (!user.isVerified) {
+      if (typeof req.trackLoginFailure === 'function') req.trackLoginFailure();
+      return res.status(403).json({
+        success: false,
+        message: "Please verify your email before logging in."
+      });
+    }
+
+    // Successful login - reset any failure counters
+    if (typeof req.resetLoginFailures === 'function') req.resetLoginFailures();
+
+    const token = generateToken(user);
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -123,11 +151,16 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+
+
 // ─── ADMIN LOGIN ───────────────────────────────────────────
 exports.adminLogin = async (req, res) => {
   console.log("DEBUG: ADMIN LOGIN REQUEST BODY:", req.body);
   try {
     let { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
     email = email.trim().toLowerCase();
     const user = await User.findOne({ email });
 

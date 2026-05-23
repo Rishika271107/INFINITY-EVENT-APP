@@ -1,132 +1,138 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import FoodSuccessModal from "./FoodSuccessModal";
+import { useAuth } from "../context/AuthContext";
+import { useBookingSubmission } from "../hooks/useBookingSubmission";
 
-import "./FoodCheckout.css";
-import API from "../services/api";
+import { FormProvider } from "../components/forms/FormProvider";
+import { useCustomForm } from "../components/forms/FormProvider";
+import { useWatch } from "react-hook-form";
+import { InputField } from "../components/forms/InputField";
+import LoadingButton from "../components/async/LoadingButton";
+import ErrorState from "../components/async/ErrorState";
+import { foodCheckoutSchema } from "../utils/validationSchemas";
 
-function FoodCheckout() {
-  const location = useLocation();
-  const navigate = useNavigate();
+/* ── Inner component rendered INSIDE <FormProvider> so useCustomForm() works ── */
+function CheckoutFormContent({ hotel, subtotal, gst, finalTotal, error, loading }) {
+  const { register, formState: { errors } } = useCustomForm();
+  const [localGuests, setLocalGuests] = useState(1); // Default to 1 so math isn't 0 initially
 
-  const {
-    hotel,
-    subtotal = 0,
-    gst = 0,
-    finalTotal = 0,
-  } = location.state || {};
-
-  const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [guests, setGuests] = useState(1);
-
-  const grandTotal =
-    guests > 0 ? finalTotal * guests : finalTotal;
+  const numFinalTotal = Number(finalTotal) || 0;
+  const numSubtotal = Number(subtotal) || 0;
+  const numGst = Number(gst) || 0;
+  const grandTotal = numFinalTotal * localGuests;
 
   return (
-    <div className="checkout-page">
+    <>
       {/* LEFT FORM */}
       <div className="checkout-form">
         <h1>Checkout Details</h1>
-
-        <input
-          type="number"
-          placeholder="Number Of Guests"
-          value={guests}
-          min="1"
-          onChange={(e) =>
-            setGuests(Number(e.target.value))
-          }
+        {error && <ErrorState message={error} />}
+        
+        <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label htmlFor="guests">Number of Guests</label>
+          <input 
+            id="guests"
+            type="number" 
+            placeholder="Enter number of guests" 
+            min={1} 
+            defaultValue={1}
+            required 
+            {...register("guests", {
+              onChange: (e) => setLocalGuests(Number(e.target.value) || 0)
+            })}
+          />
+          {errors?.guests && <p style={{ color: 'red', marginTop: '4px', fontSize: '14px' }}>{errors.guests.message}</p>}
+        </div>
+        <InputField name="eventDate" label="Event Date" type="date" required />
+        <InputField name="eventTime" label="Event Time" type="time" required />
+        <InputField name="address" label="Event Address" type="text" placeholder="Enter address" required />
+        <textarea
+          name="specialRequests"
+          placeholder="Special Requests (optional)"
+          className="input-field"
+          {...register("specialRequests")}
         />
-
-        <input type="date" />
-
-        <input type="time" />
-
-        <textarea placeholder="Event Address"></textarea>
-
-        <textarea placeholder="Special Requests"></textarea>
+        <LoadingButton loading={loading}>Confirm Booking</LoadingButton>
       </div>
 
       {/* RIGHT SUMMARY CARD */}
       <div className="summary-card">
         <h2>{hotel?.name}</h2>
-
         <div className="summary-details">
           <div className="summary-row">
             <p>Food Total</p>
-            <span>₹{subtotal.toFixed(2)}</span>
+            <span>₹{numSubtotal.toFixed(2)}</span>
           </div>
-
           <div className="summary-row">
             <p>GST (5%)</p>
-            <span>₹{gst.toFixed(2)}</span>
+            <span>₹{numGst.toFixed(2)}</span>
           </div>
-
           <div className="summary-row">
             <p>Total Per Guest</p>
-            <span>₹{finalTotal.toFixed(2)}</span>
+            <span>₹{numFinalTotal.toFixed(2)}</span>
           </div>
-
           <div className="summary-row">
             <p>Guests</p>
-            <span>{guests}</span>
+            <span>{localGuests}</span>
           </div>
-
           <hr />
-
           <div className="summary-row total-row">
             <p>Grand Total</p>
-
-            <span>
-              ₹{grandTotal.toFixed(2)}
-            </span>
+            <span>₹{grandTotal.toFixed(2)}</span>
           </div>
         </div>
-
-        <button
-           disabled={loading}
-           onClick={async () => {
-             if (guests < 1) {
-               alert("Please specify number of guests.");
-               return;
-             }
-             setLoading(true);
-             try {
-               const res = await API.post("/bookings/create", {
-                 eventDate: new Date().toISOString(),
-                 durationHours: guests,
-                 serviceName: hotel?.name || "Food Service",
-                 serviceType: "Food",
-                 totalAmount: grandTotal,
-               });
-               if (res.data?.success) {
-                 setShowModal(true);
-               } else {
-                 alert(res.data?.message || "Booking failed");
-               }
-             } catch (err) {
-               alert(err.response?.data?.message || err.message || "Failed to book food service.");
-             } finally {
-               setLoading(false);
-             }
-           }}
-        >
-          Book Now
-        </button>
       </div>
+    </>
+  );
+}
 
-      {/* SUCCESS MODAL */}
-      {showModal && (
-        <FoodSuccessModal
-          onClose={() => {
-            setShowModal(false);
-            navigate("/user/dashboard");
-          }}
+/* ── Main page component ── */
+function FoodCheckout() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { hotel, subtotal = 0, gst = 0, finalTotal = 0 } = location.state || {};
+
+  const { submitBooking, loading, error } = useBookingSubmission();
+
+  const onSubmit = async (data) => {
+    const { guests, eventDate, eventTime, address, specialRequests } = data;
+    const numGuests = Number(guests) || 0;
+    
+    const numFinalTotal = Number(finalTotal) || 0;
+    const total = numFinalTotal * numGuests;
+    // Build payload according to standardized bookingDetails
+    const payload = {
+      serviceName: hotel?.name || "Food Service",
+      serviceType: "Food",
+      totalAmount: total,
+      eventDate: `${eventDate}T${eventTime}`,
+      bookingDetails: {
+        guestCount: numGuests,
+        address,
+        specialRequests,
+        selectedItems: [], // TODO: populate with actual selected items
+        cateringType: "",
+      },
+    };
+    await submitBooking(payload);
+    // No payment integration; navigate handled in hook's success flow
+  };
+
+  return (
+    <div className="checkout-page">
+      <FormProvider schema={foodCheckoutSchema} onSubmit={onSubmit}>
+        <CheckoutFormContent
+          hotel={hotel}
+          subtotal={subtotal}
+          gst={gst}
+          finalTotal={finalTotal}
+          error={error}
+          loading={loading}
         />
-      )}
+      </FormProvider>
+      {/* renderToast removed as Razorpay is not used */}
     </div>
   );
 }
