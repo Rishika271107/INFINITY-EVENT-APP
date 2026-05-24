@@ -128,7 +128,7 @@ const MAX_PORT_TRIES = 5;
 
 function startServer(port, attempt = 1) {
   return new Promise((resolve, reject) => {
-    const server = app.listen(port, () => {
+    const server = app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on port ${port}`);
       resolve(server);
     });
