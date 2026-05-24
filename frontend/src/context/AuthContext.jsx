@@ -8,31 +8,36 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check if user is already logged in on page load
-        const storedUser = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
-        
-        if (storedUser && token) {
+        const initAuth = async () => {
+            const storedUser = localStorage.getItem('user');
+            const token = localStorage.getItem('token');
+
+            if (!storedUser || !token) {
+                setLoading(false);
+                return;
+            }
+
             try {
-                setUser(JSON.parse(storedUser));
-                
-                // Fetch latest user data in the background to ensure fields like phone are up-to-date
-                API.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } })
-                  .then(response => {
-                    if (response.data.success) {
-                        setUser(response.data.user);
-                        localStorage.setItem('user', JSON.stringify(response.data.user));
-                    }
-                  })
-                  .catch(err => console.error("Could not refresh user profile", err));
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+
+                const response = await API.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+                if (response.data.success) {
+                    setUser(response.data.user);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
 
             } catch (error) {
-                console.error("Error parsing user from localStorage", error);
+                console.error("Could not initialize auth state", error);
                 localStorage.removeItem('user');
                 localStorage.removeItem('token');
+                setUser(null);
+            } finally {
+                setLoading(false);
             }
-        }
-        setLoading(false);
+        };
+
+        initAuth();
     }, []);
 
     const login = (userData, token) => {

@@ -4,9 +4,6 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Add a request interceptor to automatically attach the JWT token
@@ -19,6 +16,14 @@ API.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API ERROR:", error);
     return Promise.reject(error);
   }
 );
