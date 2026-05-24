@@ -646,7 +646,7 @@ function AdminDashboard() {
   useEffect(() => {
     if (!bookings.length) fetchBookings();
     if (!stats.totalUsers) fetchStats();
-  }, []);
+  }, [bookings.length, fetchBookings, fetchStats, stats.totalUsers]);
 
 
 

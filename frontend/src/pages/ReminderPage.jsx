@@ -10,6 +10,7 @@ function ReminderPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     eventName: "",
@@ -21,12 +22,14 @@ function ReminderPage() {
     const fetchReminders = async () => {
       try {
         setLoading(true);
+        setError("");
         const res = await API.get("/reminders");
         if (res.data?.success) {
           setReminders(res.data.data);
         }
       } catch (err) {
         console.error("Failed to fetch reminders:", err);
+        setError(err.response?.data?.message || err.message || "Failed to load reminders.");
       } finally {
         setLoading(false);
       }
@@ -111,6 +114,8 @@ function ReminderPage() {
 
         {loading ? (
           <p className="loading-text" style={{ color: "#f3cf72", textAlign: "center", marginTop: "2rem" }}>Loading reminders...</p>
+        ) : error ? (
+          <p className="error-text" style={{ color: "#ff5252", textAlign: "center", marginTop: "2rem" }}>{error}</p>
         ) : (
           <div className="reminder-list">
             {reminders.map((reminder) => (

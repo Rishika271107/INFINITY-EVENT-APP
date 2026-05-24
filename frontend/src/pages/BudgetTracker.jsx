@@ -38,11 +38,13 @@ function BudgetTracker() {
   const [noteInput, setNoteInput] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchBudgetData = async () => {
       try {
         setLoading(true);
+        setError("");
         const budgetRes = await API.get("/budgets");
         if (budgetRes.data?.success) {
           const limit = budgetRes.data.data.budgetLimit;
@@ -56,6 +58,7 @@ function BudgetTracker() {
         }
       } catch (err) {
         console.error("Failed to fetch budget data:", err);
+        setError(err.response?.data?.message || err.message || "Failed to load budget data.");
       } finally {
         setLoading(false);
       }
@@ -178,6 +181,8 @@ function BudgetTracker() {
 
       {loading ? (
         <p className="loading-text" style={{ color: "#f3cf72", textAlign: "center", marginTop: "2rem" }}>Loading budget configurations...</p>
+      ) : error ? (
+        <p className="error-text" style={{ color: "#ff5252", textAlign: "center", marginTop: "2rem" }}>{error}</p>
       ) : (
         <div className="budget-layout">
           <div className="budget-left">

@@ -1,6 +1,7 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useBookingSubmission } from "../hooks/useBookingSubmission";
-
-const DASHBOARD_PATH = "/user/dashboard";
+import "./DecorationBooking.css";
 
 function DecorationBooking() {
   const navigate = useNavigate();
@@ -9,6 +10,16 @@ function DecorationBooking() {
   const { submitBooking, loading, error } = useBookingSubmission();
   // Razorpay removed
   // const { initiatePayment, loading: paymentLoading, renderToast } = useRazorpay();
+  const [days, setDays] = useState(1);
+  const [form, setForm] = useState({
+    date: "",
+    time: "",
+    venue: "",
+    theme: "",
+    decorationStyle: "Premium",
+    flowerType: "Mixed",
+    specialRequests: "",
+  });
 
   const pricePerDay = 15000;
   const total = pricePerDay * Number(days || 1);
@@ -40,7 +51,6 @@ function DecorationBooking() {
         },
       };
       await submitBooking(payload);
-      navigate(DASHBOARD_PATH);
     } catch (err) {
       alert(err.response?.data?.message || err.message || "Failed to book decoration service.");
     }
@@ -133,15 +143,15 @@ function DecorationBooking() {
 
             <button
               className="confirm-btn"
-              disabled={loading || paymentLoading}
+              disabled={loading}
               onClick={onConfirm}
             >
-              {loading || paymentLoading ? "PROCESSING..." : "CONFIRM BOOKING"}
+              {loading ? "PROCESSING..." : "CONFIRM BOOKING"}
             </button>
+            {error && <p className="error-text" style={{ color: "#ff5252", textAlign: "center" }}>Failed to create booking.</p>}
           </div>
         </div>
       </div>
-      {renderToast()}
     </div>
   );
 }

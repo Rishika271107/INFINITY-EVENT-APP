@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import LoadingButton from "../components/async/LoadingButton";
 import { FormProvider } from "../components/forms/FormProvider";
 import { InputField } from "../components/forms/InputField";
-import { touristSchema } from "../utils/validationSchemas";
+import { touristConfirmSchema } from "../utils/validationSchemas";
 import "./TouristFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard";
@@ -113,7 +113,7 @@ export default function TouristConfirm() {
         </p>
         <div className="tourist-confirm-layout">
           <FormProvider
-            schema={touristSchema}
+            schema={touristConfirmSchema}
             onSubmit={onSubmit}
             defaultValues={{
               checkIn: "",

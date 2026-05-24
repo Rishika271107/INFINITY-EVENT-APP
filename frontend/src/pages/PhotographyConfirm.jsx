@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import LoadingButton from "../components/async/LoadingButton";
 import { FormProvider } from "../components/forms/FormProvider";
 import { InputField } from "../components/forms/InputField";
-import { photographySchema } from "../utils/validationSchemas";
+import { photographyConfirmSchema } from "../utils/validationSchemas";
 import "./PhotographyFlow.css";
 
 const DASHBOARD_PATH = "/user/dashboard";
@@ -89,7 +89,7 @@ export default function PhotographyConfirm() {
         </p>
         <div className="photo-confirm-layout">
           <FormProvider
-            schema={photographySchema}
+            schema={photographyConfirmSchema}
             onSubmit={onSubmit}
             defaultValues={{
               hours: 2,
