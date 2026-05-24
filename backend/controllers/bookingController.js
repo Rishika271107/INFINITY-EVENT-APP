@@ -6,6 +6,7 @@ const asyncHandler = require('../utils/asyncHandler');
 
 /**
  * @desc   Create a new Booking (pending) before payment
+ * @route  POST /api/bookings
  * @route  POST /api/bookings/create
  * @access Private (JWT)
  */

@@ -59,7 +59,7 @@ export default function FashionConfirm() {
     // compute total based on selected designer price and hours
     const computedTotal = Number(selectedDesigner.pricePerHr) * Number(data.hours);
     try {
-      const res = await API.post("/bookings/create", {
+      const res = await API.post("/bookings", {
         eventDate: data.date,
         serviceName: selectedDesigner.name,
         serviceType: "Fashion Designing",

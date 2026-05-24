@@ -57,7 +57,7 @@ export default function MakeupConfirm() {
   const onSubmit = async (data) => {
     const totalAmount = Number(selectedProvider.pricePerHr) * Number(data.duration);
     try {
-      const res = await API.post("/bookings/create", {
+      const res = await API.post("/bookings", {
         eventDate: data.date,
         serviceName: selectedProvider.name,
         serviceType: "Makeup",

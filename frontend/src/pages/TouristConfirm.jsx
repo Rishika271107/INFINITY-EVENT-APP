@@ -72,7 +72,7 @@ export default function TouristConfirm() {
     setLoading(true);
     try {
       const nights = calculateNights(data.checkIn, data.checkOut);
-      const res = await API.post("/bookings/create", {
+      const res = await API.post("/bookings", {
         eventDate: data.checkIn,
         serviceName: selectedHotel?.name,
         serviceType: "Tourism",

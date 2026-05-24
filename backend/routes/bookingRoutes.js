@@ -19,6 +19,12 @@ const {
 
 // CREATE BOOKING
 router.post(
+  "/",
+  protect,
+  createBooking
+);
+
+router.post(
   "/create",
   protect,
   createBooking

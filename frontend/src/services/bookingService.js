@@ -21,7 +21,7 @@ export const normalizeBookingPayload = ({
 
 /** Create a new booking */
 export const createBooking = async (payload) => {
-  const response = await API.post("/bookings/create", payload);
+  const response = await API.post("/bookings", payload);
   return response;
 };
 

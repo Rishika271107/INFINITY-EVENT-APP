@@ -69,17 +69,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-if (process.env.NODE_ENV === "production") {
-  const buildPath = path.resolve(__dirname, '..', 'frontend', 'build');
-  app.use(express.static(buildPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(buildPath, 'index.html'));
-  });
-}
-
-
-
-
 // ROUTES
 app.use(
   "/api/auth",
@@ -116,6 +105,21 @@ app.use("/api/budgets",
 app.use("/api/reminders",
   require("./routes/reminderRoutes")
 );
+
+app.use('/api', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
+if (process.env.NODE_ENV === "production") {
+  const buildPath = path.resolve(__dirname, '..', 'frontend', 'build');
+  app.use(express.static(buildPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+}
 
 // Error handling middleware (must be after all routes)
 const { errorHandler } = require("./middleware/errorMiddleware");
