@@ -11,7 +11,8 @@ const xss = require('xss-clean');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-
+const mongoose = require('mongoose');
+const seedUsers = require('./scripts/seedUsers');
 // Log environment validation (logger will handle output)
 logger.info('Environment configuration loaded successfully');
 
@@ -21,8 +22,6 @@ console.log("--- ENV VALIDATION ---");
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS LOADED:", !!process.env.EMAIL_PASS);
 console.log("----------------------");
-
-connectDB();
 
 const app = express();
 // Enable trust proxy for correct client IPs behind reverse proxies (e.g., Render, Railway)
@@ -53,7 +52,22 @@ app.use(helmet());
 app.use(cookieParser());
 
 // Health check endpoint
-app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+app.get('/health', (req, res) => {
+  const states = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+    99: 'uninitialized',
+  };
+  const dbState = states[mongoose.connection.readyState] || 'unknown';
+  
+  res.status(200).json({
+    success: true,
+    server: 'running',
+    database: dbState
+  });
+});
 
 if (process.env.NODE_ENV === "production") {
   const buildPath = path.resolve(__dirname, '..', 'frontend', 'build');
@@ -113,29 +127,44 @@ const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 5000;
 const MAX_PORT_TRIES = 5;
 
 function startServer(port, attempt = 1) {
-  const server = app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
+  return new Promise((resolve, reject) => {
+    const server = app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+      resolve(server);
+    });
 
-  server.on('error', (error) => {
-    if (error.code === 'EADDRINUSE') {
-      if (attempt < MAX_PORT_TRIES) {
-        const nextPort = port + 1;
-        console.warn(`Port ${port} in use, trying port ${nextPort}...`);
-        startServer(nextPort, attempt + 1);
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        if (attempt < MAX_PORT_TRIES) {
+          const nextPort = port + 1;
+          console.warn(`Port ${port} in use, trying port ${nextPort}...`);
+          resolve(startServer(nextPort, attempt + 1));
+        } else {
+          console.error(`Unable to bind to a free port after ${MAX_PORT_TRIES} attempts. Please free a port or set a different PORT in your .env file.`);
+          process.exit(1);
+        }
       } else {
-        console.error(`Unable to bind to a free port after ${MAX_PORT_TRIES} attempts. Please free a port or set a different PORT in your .env file.`);
-        process.exit(1);
+        console.error('Server error:', error);
+        reject(error);
       }
-      return;
-    }
-    console.error('Server error:', error);
-    process.exit(1);
+    });
   });
 }
 
+// Ensure startup only happens if DB connects and seeds
+async function initializeApp() {
+  try {
+    await connectDB();
+    await seedUsers();
+    await startServer(DEFAULT_PORT);
+  } catch (error) {
+    console.error('❌ Failed to initialize app:', error);
+    process.exit(1);
+  }
+}
+
 if (require.main === module) {
-  startServer(DEFAULT_PORT);
+  initializeApp();
 }
 
 module.exports = app;

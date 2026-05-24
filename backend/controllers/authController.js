@@ -102,46 +102,58 @@ exports.registerUser = async (req, res) => {
 // ─── LOGIN USER ────────────────────────────────────────────
 exports.loginUser = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
-    email = email.trim().toLowerCase();
-    const user = await User.findOne({ email });
 
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
-      // Track failed attempt
-      if (typeof req.trackLoginFailure === 'function') req.trackLoginFailure();
-      return res.status(400).json({ message: "Account not found. Please sign up." });
+      return res.status(400).json({ success: false, message: "Invalid email or password." });
+    }
+
+    // Phase 1: Block check
+    if (user.isBlocked) {
+      return res.status(403).json({ success: false, message: "Account is blocked. Contact support." });
+    }
+
+    // Phase 2: Temporary lock check
+    if (user.lockUntil && user.lockUntil > Date.now()) {
+      return res.status(403).json({ success: false, message: "Account temporarily locked. Try again later." });
+    }
+
+    // Phase 3: Verification check
+    if (!user.isVerified) {
+      return res.status(403).json({ success: false, message: "Please verify your email before logging in." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      if (typeof req.trackLoginFailure === 'function') req.trackLoginFailure();
-      return res.status(400).json({ message: "Invalid email or password." });
+      // Increment failed attempts
+      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+      if (user.failedLoginAttempts >= 5) {
+        user.isBlocked = true;
+        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes lock
+      }
+      await user.save();
+      return res.status(400).json({ success: false, message: "Invalid email or password." });
     }
 
-    if (!user.isVerified) {
-      if (typeof req.trackLoginFailure === 'function') req.trackLoginFailure();
-      return res.status(403).json({
-        success: false,
-        message: "Please verify your email before logging in."
-      });
-    }
+    // Successful login: reset counters and update lastLogin
+    user.failedLoginAttempts = 0;
+    user.lockUntil = null;
+    user.isBlocked = false;
+    user.lastLogin = new Date();
+    await user.save();
 
-    // Successful login - reset any failure counters
-    if (typeof req.resetLoginFailures === 'function') req.resetLoginFailures();
-
-    const token = generateToken(user);
+    // Generate JWT with user ID
+    const token = generateToken(user._id);
     res.status(200).json({
       success: true,
-      message: "Login successful",
       token,
       user: {
         id: user._id,
-        username: user.username,
         email: user.email,
-        phone: user.phone,
         role: user.role
       }
     });
@@ -150,49 +162,12 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+// Duplicate loginUser implementation removed
 
 
 
-// ─── ADMIN LOGIN ───────────────────────────────────────────
-exports.adminLogin = async (req, res) => {
-  console.log("DEBUG: ADMIN LOGIN REQUEST BODY:", req.body);
-  try {
-    let { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-    email = email.trim().toLowerCase();
-    const user = await User.findOne({ email });
 
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ message: "Unauthorized. Admin access only." });
-    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
-
-    // Direct Admin Login without OTP
-    const token = generateToken(user._id);
-
-    res.status(200).json({
-      success: true,
-      message: "Admin login successful.",
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        phone: user.phone,
-        role: user.role
-      }
-    });
-  } catch (error) {
-    console.error("ADMIN LOGIN ERROR:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
 
 // ─── VERIFY OTP ────────────────────────────────────────────
 exports.verifyOTP = async (req, res) => {

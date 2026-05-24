@@ -23,24 +23,14 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user"
-    },
-
-    otp: {
-      type: String
-    },
-
-    otpExpiry: {
-      type: Date
-    },
-
-    isVerified: {
-      type: Boolean,
-      default: false
-    }
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    isVerified: { type: Boolean, default: false },
+    isBlocked: { type: Boolean, default: false },
+    failedLoginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date, default: null },
+    lastLogin: { type: Date },
+    otp: { type: String },
+    otpExpiry: { type: Date }
   },
   {
     timestamps: true

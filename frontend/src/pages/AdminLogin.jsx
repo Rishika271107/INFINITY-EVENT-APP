@@ -23,7 +23,7 @@ function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await API.post("/auth/admin-login", formData);
+      const response = await API.post("/auth/login", formData);
       if (response.data.success) {
         const { user, token } = response.data;
         login(user, token);

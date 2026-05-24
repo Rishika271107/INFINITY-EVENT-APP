@@ -8,7 +8,6 @@ const {
   registerUser,
   verifyOTP,
   loginUser,
-  adminLogin,
   resendOTP,
   forgotPassword,
   resetPassword,
@@ -38,13 +37,13 @@ const { protect, adminOnly } = require('../middleware/authMiddleware');
 const { loginLimiter, registerLimiter, otpLimiter } = require('../middleware/rateLimiter');
 
 // Failed login lockout middleware
-const failedLoginLock = require('../middleware/failedLoginLock');
+
 
 // Routes – validation, rate limiting, and protection applied
 router.post('/register', registerLimiter, validate(registerSchema), asyncHandler(registerUser));
 router.post('/verify-otp', otpLimiter, validate(verifyOTPSchema), asyncHandler(verifyOTP));
-router.post('/login', loginLimiter, failedLoginLock, validate(loginSchema), asyncHandler(loginUser));
-router.post('/admin-login', validate(adminLoginSchema), asyncHandler(adminLogin));
+router.post('/login', loginLimiter, validate(loginSchema), asyncHandler(loginUser));
+
 router.post('/resend-otp', validate(resendOTPSchema), asyncHandler(resendOTP));
 router.post('/forgot-password', validate(forgotPasswordSchema), asyncHandler(forgotPassword));
 router.post('/reset-password', validate(resetPasswordSchema), asyncHandler(resetPassword));

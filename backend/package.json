@@ -7,7 +7,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "lint": "eslint .",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "seed": "node scripts/seedUsers.js"
   },
   "author": "Rishi",
   "license": "ISC",

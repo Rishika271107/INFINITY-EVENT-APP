@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 // Reusable validators
-const nonEmptyString = (msg: string) => z.string().nonempty(msg);
+const nonEmptyString = (msg) => z.string().nonempty(msg);
 const optionalString = () => z.string().optional();
-const positiveInt = (msg: string) => z.number().int().positive(msg);
-const dateString = (msg: string) => z.string().nonempty(msg); // simple date validation – can be extended with regex
-const timeString = (msg: string) => z.string().nonempty(msg);
+const positiveInt = (msg) => z.number().int().positive(msg);
+const dateString = (msg) => z.string().nonempty(msg); // simple date validation – can be extended with regex
+const timeString = (msg) => z.string().nonempty(msg);
 
 // ==================== Booking Confirmation Schemas ====================
 // Venue Confirmation
