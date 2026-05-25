@@ -34,6 +34,15 @@ router.post(
 
 // GET USER BOOKINGS
 router.get(
+  "/",
+  protect,
+  getUserBookings
+);
+
+
+
+// GET USER BOOKINGS
+router.get(
   "/my-bookings",
   protect,
   getUserBookings
