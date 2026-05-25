@@ -43,7 +43,16 @@ app.use(xss());
 app.use(morgan('combined', { stream: logger.stream }));
 
 // Enable CORS with options
-app.use(cors(require('./config/corsOptions')));
+app.use(cors({
+  origin: [
+    "https://YOUR-VERCEL-APP.vercel.app"
+  ],
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"],
+  credentials: false
+}));
+
+app.options("*", cors());
 
 // Set various security headers
 app.use(helmet());
