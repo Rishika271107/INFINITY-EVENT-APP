@@ -42,15 +42,23 @@ app.use(xss());
 // HTTP request logger using Winston
 app.use(morgan('combined', { stream: logger.stream }));
 
-// Enable CORS with options
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://infinitygrandevents.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "https://YOUR-VERCEL-APP.vercel.app"
-  ],
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"],
-  credentials: false
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS blocked"));
+    }
+  },
+  credentials: true,
 }));
+
+app.options("*", cors());
 
 app.options("*", cors());
 
@@ -60,29 +68,28 @@ app.use(helmet());
 // Parse cookies
 app.use(cookieParser());
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  const states = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting',
-    99: 'uninitialized',
-  };
-  const dbState = states[mongoose.connection.readyState] || 'unknown';
-  
-  res.status(200).json({
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
     success: true,
-    server: 'running',
-    database: dbState
+    message: "Infinity Grand Events API Running",
   });
 });
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Backend running successfully",
+    environment: process.env.NODE_ENV || "development",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 
 // ROUTES
 app.use(
   "/api/auth",
-  require("./routes/authRoutes")
-);
 
 app.use(
   "/api/events",
@@ -115,7 +122,7 @@ app.use("/api/reminders",
   require("./routes/reminderRoutes")
 );
 
-app.use('/api', (req, res) => {
+app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
     message: `API route not found: ${req.method} ${req.originalUrl}`,
@@ -131,8 +138,13 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Error handling middleware (must be after all routes)
-const { errorHandler } = require("./middleware/errorMiddleware");
-app.use(errorHandler);
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
 
 
 
