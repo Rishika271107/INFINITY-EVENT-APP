@@ -58,10 +58,6 @@ app.use(cors({
   credentials: true,
 }));
 
-app.options("*", cors());
-
-app.options("*", cors());
-
 // Set various security headers
 app.use(helmet());
 
@@ -90,6 +86,8 @@ app.get('/api/health', (req, res) => {
 // ROUTES
 app.use(
   "/api/auth",
+  require("./routes/authRoutes")
+);
 
 app.use(
   "/api/events",
@@ -105,7 +103,6 @@ app.use(
   "/api/admin",
   require("./routes/adminRoutes")
 );
-
 app.use("/api/payment",
   require("./routes/paymentRoutes")
 );
