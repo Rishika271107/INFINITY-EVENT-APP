@@ -4,6 +4,13 @@ const otpGenerator = require("otp-generator");
 const generateToken = require("../utils/generateToken");
 const sendEmail = require("../utils/sendEmail");
 
+const logAuthEvent = (payload) => {
+  console.log({
+    ...payload,
+    timestamp: new Date().toISOString(),
+  });
+};
+
 // ─── HELPER: SEND OTP ──────────────────────────────────────
 const sendOTP = async (email, username = "User") => {
   const otp = otpGenerator.generate(6, {
@@ -25,20 +32,25 @@ const sendOTP = async (email, username = "User") => {
   );
 
   // Attempt Email Delivery
-  await sendEmail(
-    email,
-    "OTP Verification - Infinity Grand Events",
-    `Hello ${username}, your OTP is: ${otp}. Valid for 30 minutes.`,
-    otp
-  );
+  try {
+    await sendEmail(
+      email,
+      "OTP Verification - Infinity Grand Events",
+      `Hello ${username}, your OTP is: ${otp}. Valid for 30 minutes.`,
+      otp
+    );
 
-  console.log(`✅ EMAIL SENT to ${email}`);
-  return { success: true };
+    console.log(`✅ EMAIL SENT to ${email}`);
+    return { success: true, emailSent: true };
+  } catch (error) {
+    console.error("OTP EMAIL SEND FAILED:", error);
+    return { success: true, emailSent: false, error };
+  }
 };
 
 // ─── REGISTER USER ─────────────────────────────────────────
 exports.registerUser = async (req, res) => {
-  console.log("DEBUG: REGISTER REQUEST BODY:", req.body);
+  console.log("REGISTER REQUEST:", req.body);
   try {
     let { username, email, phone, password } = req.body;
     
@@ -82,20 +94,21 @@ exports.registerUser = async (req, res) => {
     }
 
     // Generate and send OTP (Helper handles logs)
-    await sendOTP(email, username);
+    const otpResult = await sendOTP(email, username);
 
     res.status(201).json({
       success: true,
-      message: "Registration successful! Please check your email for OTP."
+      message: otpResult.emailSent
+        ? "Registration successful! Please check your email for OTP."
+        : "Registration successful, but OTP email could not be delivered. Please request a resend.",
+      otpSent: otpResult.emailSent
     });
   } catch (error) {
     console.error("REGISTER ERROR:", error);
-    // If it's an email error, provide a clearer message
     const errMsg = error?.message || "";
-    const errorMessage = errMsg.includes("SMTP") || error.code 
-      ? "Registration failed: Could not send OTP email. Please check your SMTP settings." 
-      : errMsg || "An unknown error occurred.";
-    res.status(500).json({ success: false, message: errorMessage });
+    const status = error?.name === "ValidationError" ? 400 : 500;
+    const errorMessage = errMsg || "Registration failed. Please try again.";
+    res.status(status).json({ success: false, message: errorMessage });
   }
 };
 
@@ -112,8 +125,20 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid email or password." });
     }
 
+    if (user.lockUntil && user.lockUntil < Date.now()) {
+      user.failedLoginAttempts = 0;
+      user.lockUntil = null;
+      user.isBlocked = false;
+      await user.save();
+      logAuthEvent({
+        action: "LOCK_RESET",
+        email: user.email,
+        role: user.role,
+      });
+    }
+
     // Phase 1: Block check
-    if (user.isBlocked) {
+    if (user.isBlocked && !(user.lockUntil && user.lockUntil < Date.now())) {
       return res.status(403).json({ success: false, message: "Account is blocked. Contact support." });
     }
 
@@ -133,7 +158,21 @@ exports.loginUser = async (req, res) => {
       user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
       if (user.failedLoginAttempts >= 5) {
         user.isBlocked = true;
-        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes lock
+        user.lockUntil = new Date(Date.now() + 30 * 60 * 1000);
+        logAuthEvent({
+          action: "ACCOUNT_LOCKED",
+          email: user.email,
+          role: user.role,
+          failedLoginAttempts: user.failedLoginAttempts,
+          lockUntil: user.lockUntil,
+        });
+      } else {
+        logAuthEvent({
+          action: "LOGIN_FAILED",
+          email: user.email,
+          role: user.role,
+          failedLoginAttempts: user.failedLoginAttempts,
+        });
       }
       await user.save();
       return res.status(400).json({ success: false, message: "Invalid email or password." });
@@ -143,8 +182,16 @@ exports.loginUser = async (req, res) => {
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
     user.isBlocked = false;
+    if (user.role === "admin") {
+      user.isVerified = true;
+    }
     user.lastLogin = new Date();
     await user.save();
+    logAuthEvent({
+      action: "LOGIN_SUCCESS",
+      email: user.email,
+      role: user.role,
+    });
 
     // Generate JWT with user ID
     const token = generateToken(user._id);
@@ -180,10 +227,20 @@ exports.verifyOTP = async (req, res) => {
     }
 
     if (user.otp !== otp) {
+      logAuthEvent({
+        action: "OTP_FAILURE",
+        email,
+        reason: "invalid_otp",
+      });
       return res.status(400).json({ message: "Invalid OTP. Check your email or console." });
     }
 
     if (user.otpExpiry < Date.now()) {
+      logAuthEvent({
+        action: "OTP_FAILURE",
+        email,
+        reason: "expired_otp",
+      });
       return res.status(400).json({ message: "OTP Expired. Please request a new one." });
     }
 
@@ -274,10 +331,20 @@ exports.resetPassword = async (req, res) => {
     }
 
     if (user.otp !== otp) {
+      logAuthEvent({
+        action: "OTP_FAILURE",
+        email,
+        reason: "invalid_otp",
+      });
       return res.status(400).json({ message: "Invalid OTP. Check your email." });
     }
 
     if (user.otpExpiry < Date.now()) {
+      logAuthEvent({
+        action: "OTP_FAILURE",
+        email,
+        reason: "expired_otp",
+      });
       return res.status(400).json({ message: "OTP Expired. Please request a new one." });
     }
 

@@ -11,7 +11,8 @@
     "dev": "nodemon server.js",
     "lint": "eslint .",
     "test": "jest --coverage",
-    "seed": "node scripts/seedUsers.js"
+    "seed": "node scripts/seedUsers.js",
+    "unblock-admin": "node scripts/unblockAdmin.js"
   },
   "author": "Rishi",
   "license": "ISC",

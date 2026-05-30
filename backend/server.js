@@ -66,19 +66,13 @@ app.use(cookieParser());
 
 // Root endpoint
 app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: "Infinity Grand Events API Running",
-  });
+  res.send("Infinity Grand Events API Running");
 });
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Backend running successfully",
-    environment: process.env.NODE_ENV || "development",
-    timestamp: new Date().toISOString(),
   });
 });
 
