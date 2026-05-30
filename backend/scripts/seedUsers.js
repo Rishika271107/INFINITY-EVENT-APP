@@ -19,7 +19,10 @@ async function seedUsers() {
         },
         $set: {
           phone: '0000000000',
-          isVerified: true
+          isVerified: true,
+          isBlocked: false,
+          failedLoginAttempts: 0,
+          lockUntil: null
         }
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -38,7 +41,10 @@ async function seedUsers() {
         },
         $set: {
           phone: '1111111111',
-          isVerified: true
+          isVerified: true,
+          isBlocked: false,
+          failedLoginAttempts: 0,
+          lockUntil: null
         }
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
