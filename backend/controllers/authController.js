@@ -12,8 +12,8 @@ const logAuthEvent = (payload) => {
 };
 
 // ─── HELPER: SEND OTP ──────────────────────────────────────
-const sendOTP = async (email, username = "User") => {
-  const otp = otpGenerator.generate(6, {
+const sendOTP = async (email, username = "User", providedOtp = null) => {
+  const otp = providedOtp || otpGenerator.generate(6, {
     upperCaseAlphabets: false,
     lowerCaseAlphabets: false,
     specialChars: false
@@ -70,6 +70,7 @@ exports.registerUser = async (req, res) => {
     }
 
     let user = await User.findOne({ email });
+    let otp = null;
 
     if (user) {
       if (user.isVerified) {
@@ -93,16 +94,33 @@ exports.registerUser = async (req, res) => {
       console.log("NEW USER CREATED:", email);
     }
 
-    // Generate and send OTP (Helper handles logs)
-    const otpResult = await sendOTP(email, username);
+    otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false
+    });
+    const otpExpiry = Date.now() + 30 * 60 * 1000;
+    await User.findOneAndUpdate(
+      { email },
+      { otp, otpExpiry },
+      { new: true }
+    );
+    console.log("OTP STORED:", email);
 
     res.status(201).json({
       success: true,
-      message: otpResult.emailSent
-        ? "Registration successful! Please check your email for OTP."
-        : "Registration successful, but OTP email could not be delivered. Please request a resend.",
-      otpSent: otpResult.emailSent
+      message: "Registration successful. OTP is being delivered.",
+      otpSent: true
     });
+
+    console.log("BACKGROUND OTP SEND STARTED:", email);
+    sendOTP(email, username, otp)
+      .then(() => {
+        console.log("BACKGROUND OTP SEND SUCCESS:", email);
+      })
+      .catch((error) => {
+        console.error("BACKGROUND OTP SEND FAILED:", error);
+      });
   } catch (error) {
     console.error("REGISTER ERROR:", error);
     const errMsg = error?.message || "";
