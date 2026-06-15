@@ -54,7 +54,9 @@ export default function VenueConfirm() {
   const total = useMemo(
     () => {
       if (!selectedVenue) return 0;
-      return Number(selectedVenue.price) * Number(form.duration || 1);
+      const price = Number(selectedVenue.price) || 0;
+      const duration = Number(form.duration) || 1;
+      return price * duration;
     },
     [selectedVenue, form.duration]
   );

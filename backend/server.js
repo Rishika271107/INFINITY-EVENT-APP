@@ -43,7 +43,6 @@ app.use(xss());
 app.use(morgan('combined', { stream: logger.stream }));
 
 const allowedOrigins = [
-  "http://localhost:5173",
   "https://infinitygrandevents.vercel.app"
 ];
 

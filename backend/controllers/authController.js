@@ -11,7 +11,6 @@ const logAuthEvent = (payload) => {
   });
 };
 
-// ─── HELPER: SEND OTP ──────────────────────────────────────
 const sendOTP = async (email, username = "User") => {
   const otp = otpGenerator.generate(6, {
     upperCaseAlphabets: false,
@@ -31,21 +30,19 @@ const sendOTP = async (email, username = "User") => {
     { new: true }
   );
 
-  // Attempt Email Delivery
-  try {
-    await sendEmail(
-      email,
-      "OTP Verification - Infinity Grand Events",
-      `Hello ${username}, your OTP is: ${otp}. Valid for 30 minutes.`,
-      otp
-    );
-
+  // Attempt Email Delivery (Non-blocking)
+  sendEmail(
+    email,
+    "OTP Verification - Infinity Grand Events",
+    `Hello ${username}, your OTP is: ${otp}. Valid for 30 minutes.`,
+    otp
+  ).then(() => {
     console.log(`✅ EMAIL SENT to ${email}`);
-    return { success: true, emailSent: true };
-  } catch (error) {
-    console.error("OTP EMAIL SEND FAILED:", error);
-    return { success: true, emailSent: false, error };
-  }
+  }).catch((error) => {
+    console.error("OTP EMAIL SEND FAILED (Background):", error);
+  });
+
+  return { success: true, emailSent: true }; // Optimistic return
 };
 
 // ─── REGISTER USER ─────────────────────────────────────────
