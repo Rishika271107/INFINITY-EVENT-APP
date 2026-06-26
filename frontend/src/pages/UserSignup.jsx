@@ -22,8 +22,12 @@ function UserSignup() {
         password: data.password,
       });
       if (response.data?.success) {
-        localStorage.setItem("signupEmail", data.email);
-        navigate("/verify-otp");
+        if (response.data?.otpSent === false) {
+          setErrorMsg(response.data?.message || "Registration successful, but OTP email could not be delivered.");
+        } else {
+          localStorage.setItem("signupEmail", data.email);
+          navigate("/verify-otp");
+        }
       } else {
         setErrorMsg(response.data?.message || "Signup failed.");
       }
