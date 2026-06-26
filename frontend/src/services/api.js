@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 30000,
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'development' ? 'http://localhost:5005/api' : 'https://infinity-event-app.onrender.com/api'),
+  timeout: 100000, // Render free tier can take up to 50 seconds to wake up
   withCredentials: false,
   headers: {
     "Content-Type": "application/json"
