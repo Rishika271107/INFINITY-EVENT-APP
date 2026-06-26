@@ -30,19 +30,20 @@ const sendOTP = async (email, username = "User") => {
     { new: true }
   );
 
-  // Attempt Email Delivery (Non-blocking)
-  sendEmail(
-    email,
-    "OTP Verification - Infinity Grand Events",
-    `Hello ${username}, your OTP is: ${otp}. Valid for 30 minutes.`,
-    otp
-  ).then(() => {
+  // Attempt Email Delivery (Blocking to ensure status is accurate)
+  try {
+    await sendEmail(
+      email,
+      "OTP Verification - Infinity Grand Events",
+      `Hello ${username}, your OTP is: ${otp}. Valid for 30 minutes.`,
+      otp
+    );
     console.log(`✅ EMAIL SENT to ${email}`);
-  }).catch((error) => {
-    console.error("OTP EMAIL SEND FAILED (Background):", error);
-  });
-
-  return { success: true, emailSent: true }; // Optimistic return
+    return { success: true, emailSent: true };
+  } catch (error) {
+    console.error("OTP EMAIL SEND FAILED:", error);
+    return { success: true, emailSent: false }; // Still successfully saved to DB, just email failed
+  }
 };
 
 // ─── REGISTER USER ─────────────────────────────────────────

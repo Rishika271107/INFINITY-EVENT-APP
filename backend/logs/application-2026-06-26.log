@@ -1,0 +1,8 @@
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-26 12:01:14"}
+{"level":"info","message":"127.0.0.1 - - [26/Jun/2026:06:41:55 +0000] \"OPTIONS /api/auth/me HTTP/1.1\" 500 42 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-06-26 12:11:55"}
+{"level":"info","message":"127.0.0.1 - - [26/Jun/2026:06:41:55 +0000] \"OPTIONS /api/auth/me HTTP/1.1\" 500 42 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-06-26 12:11:55"}
+{"level":"info","message":"127.0.0.1 - - [26/Jun/2026:06:45:50 +0000] \"POST /api/auth/register HTTP/1.1\" 201 101 \"-\" \"Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655\"","timestamp":"2026-06-26 12:15:50"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-26 12:16:41"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-26 12:18:04"}
+{"level":"info","message":"127.0.0.1 - - [26/Jun/2026:06:51:19 +0000] \"OPTIONS /api/auth/register HTTP/1.1\" 204 0 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-06-26 12:21:19"}
+{"level":"info","message":"127.0.0.1 - - [26/Jun/2026:06:51:22 +0000] \"POST /api/auth/register HTTP/1.1\" 201 101 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36\"","timestamp":"2026-06-26 12:21:22"}

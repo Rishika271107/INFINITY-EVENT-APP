@@ -42,20 +42,8 @@ app.use(xss());
 // HTTP request logger using Winston
 app.use(morgan('combined', { stream: logger.stream }));
 
-const allowedOrigins = [
-  "https://infinitygrandevents.vercel.app"
-];
-
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS blocked"));
-    }
-  },
-  credentials: true,
-}));
+const corsOptions = require('./config/corsOptions');
+app.use(cors(corsOptions));
 
 // Set various security headers
 app.use(helmet());
