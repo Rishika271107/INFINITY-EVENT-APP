@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children, role }) => {
         return <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading...</div>;
     }
 
-    if (!user && !token) {
+    if (!token) {
         return <Navigate to="/user/login" replace />;
     }
 

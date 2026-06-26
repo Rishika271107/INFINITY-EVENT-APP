@@ -13,9 +13,9 @@ exports.getDashboardStats = async (req, res) => {
     const totalBookings = await Booking.countDocuments();
     const pendingBookings = await Booking.countDocuments({ bookingStatus: "pending" });
 
-    // Calculate actual real-time aggregate revenue from paid/confirmed bookings
+    // Calculate actual real-time aggregate revenue from non-cancelled bookings
     const revenueData = await Booking.aggregate([
-      { $match: { paymentStatus: "paid" } },
+      { $match: { bookingStatus: { $ne: "cancelled" } } },
       { $group: { _id: null, total: { $sum: "$totalAmount" } } }
     ]);
     const totalRevenue = revenueData.length > 0 ? revenueData[0].total : 0;

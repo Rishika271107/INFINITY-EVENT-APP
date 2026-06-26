@@ -49,6 +49,14 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('adminToken');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('role');
+        sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('adminToken');
         setUser(null);
         window.location.href = '/user/login';
     };
