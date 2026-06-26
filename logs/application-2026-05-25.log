@@ -1,4 +1,0 @@
-{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-05-25 01:26:40"}
-{"level":"info","message":"::ffff:127.0.0.1 - - [24/May/2026:19:56:40 +0000] \"POST /api/bookings HTTP/1.1\" 401 54 \"-\" \"-\"","timestamp":"2026-05-25 01:26:40"}
-{"level":"info","message":"::ffff:127.0.0.1 - - [24/May/2026:19:56:40 +0000] \"POST /api/bookings/create HTTP/1.1\" 401 54 \"-\" \"-\"","timestamp":"2026-05-25 01:26:40"}
-{"level":"info","message":"::ffff:127.0.0.1 - - [24/May/2026:19:56:40 +0000] \"GET /api/does-not-exist HTTP/1.1\" 404 74 \"-\" \"-\"","timestamp":"2026-05-25 01:26:40"}
