@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import API from "../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useRazorpay } from "../hooks/useRazorpay";
 import { FormProvider } from "../components/forms/FormProvider";
 import { InputField } from "../components/forms/InputField";
 import { makeupConfirmSchema } from "../utils/validationSchemas";
@@ -35,8 +33,6 @@ export default function MakeupConfirm() {
   const selectedProvider = location.state?.selectedProvider;
 
   const [duration, setDuration] = useState(2);
-  const { user } = useAuth();
-  const { initiatePayment, renderToast } = useRazorpay();
 
   const total = useMemo(() => {
     if (!selectedProvider) return 0;
@@ -70,18 +66,11 @@ export default function MakeupConfirm() {
       });
       if (res.data?.success) {
         const bookingData = res.data.data.booking;
-        await initiatePayment(bookingData._id, user, (verifyRes) => {
-          navigate("/booking-success", { state: { booking: verifyRes.booking || bookingData } });
-        });
+        navigate("/booking-success", { state: { booking: bookingData } });
       }
     } catch (err) {
       alert(err.response?.data?.message || err.message || "Failed to book makeup service.");
     }
-  };
-
-  const goDashboard = () => {
-    setSuccess(false);
-    navigate(DASHBOARD_PATH, { replace: true });
   };
 
   return (
@@ -123,7 +112,7 @@ export default function MakeupConfirm() {
           </aside>
         </div>
       </div>
-      {renderToast()}
+
     </div>
   );
 }

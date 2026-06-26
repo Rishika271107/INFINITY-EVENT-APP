@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useRazorpay } from "../hooks/useRazorpay";
 import { FormProvider } from "../components/forms/FormProvider";
 import { InputField } from "../components/forms/InputField";
 import { fashionConfirmSchema } from "../utils/validationSchemas";
@@ -34,8 +32,6 @@ export default function FashionConfirm() {
   const location = useLocation();
   const selectedDesigner = location.state?.selectedDesigner;
 
-  const { user } = useAuth();
-  const { initiatePayment, renderToast } = useRazorpay();
 
   const total = useMemo(() => {
     if (!selectedDesigner) return 0;
@@ -71,18 +67,11 @@ export default function FashionConfirm() {
       });
       if (res.data?.success) {
         const bookingData = res.data.data.booking;
-        await initiatePayment(bookingData._id, user, (verifyRes) => {
-          navigate("/booking-success", { state: { booking: verifyRes.booking || bookingData } });
-        });
+        navigate("/booking-success", { state: { booking: bookingData } });
       }
     } catch (err) {
       alert(err.response?.data?.message || err.message || "Failed to book fashion service.");
     }
-  };
-
-  const goDashboard = () => {
-    setSuccess(false);
-    navigate(DASHBOARD_PATH, { replace: true });
   };
 
   return (
@@ -123,7 +112,7 @@ export default function FashionConfirm() {
           </FormProvider>
         </div>
       </div>
-      {renderToast()}
+
     </div>
   );
 }
