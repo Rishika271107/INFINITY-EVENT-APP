@@ -26,6 +26,9 @@ const sendEmail = async (email, subject, text, otp = null) => {
         user: user,
         pass: pass,
       },
+      connectionTimeout: 10000, // 10 seconds timeout
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
 
     const mailOptions = {

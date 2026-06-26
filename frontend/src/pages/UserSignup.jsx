@@ -29,9 +29,16 @@ function UserSignup() {
       }
     } catch (err) {
       if (!err.response) {
-        setErrorMsg("Connection to server failed. Please ensure the backend server is started.");
+        setErrorMsg("Connection to server failed. Please ensure the backend server is running on the correct port.");
       } else {
-        setErrorMsg(err.response.data?.message || "Signup failed. Please try again.");
+        const errorData = err.response.data;
+        if (errorData?.errors && Array.isArray(errorData.errors)) {
+          // Extract specific Zod validation errors from the backend
+          const detailedErrors = errorData.errors.map(e => `${e.path}: ${e.message}`).join(', ');
+          setErrorMsg(`Validation failed: ${detailedErrors}`);
+        } else {
+          setErrorMsg(errorData?.message || "Signup failed. Please try again.");
+        }
       }
     } finally {
       setLoading(false);
