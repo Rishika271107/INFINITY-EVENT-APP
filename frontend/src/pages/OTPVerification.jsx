@@ -64,7 +64,11 @@ const OTPVerification = () => {
         try {
             const response = await API.post('/auth/resend-otp', { email });
             if (response.data.success) {
-                setSuccess('A new OTP has been sent to your email.');
+                if (response.data.emailSent === false) {
+                    setEmailFailed(true);
+                } else {
+                    setSuccess('✅ A new OTP has been sent to your email. Check your inbox and spam folder.');
+                }
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to resend OTP.');

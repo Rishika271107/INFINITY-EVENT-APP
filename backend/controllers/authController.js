@@ -279,12 +279,21 @@ exports.resendOTP = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await sendOTP(email, user.username);
+    const result = await sendOTP(email, user.username);
 
-    res.status(200).json({
-      success: true,
-      message: "A new OTP has been sent."
-    });
+    if (result.emailSent) {
+      res.status(200).json({
+        success: true,
+        emailSent: true,
+        message: "A new OTP has been sent to your email."
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        emailSent: false,
+        message: "OTP generated but email delivery failed. Check server logs for the OTP code."
+      });
+    }
   } catch (error) {
     console.error("RESEND ERROR:", error);
     res.status(500).json({ message: error.message });
