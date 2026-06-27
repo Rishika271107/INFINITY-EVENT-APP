@@ -9,7 +9,9 @@ const OTPVerification = () => {
     const [otp, setOtp] = useState('');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [emailFailed, setEmailFailed] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,6 +20,11 @@ const OTPVerification = () => {
             navigate('/user/signup');
         } else {
             setEmail(savedEmail);
+        }
+        // Show warning if email delivery failed during signup
+        if (localStorage.getItem('otpEmailFailed') === 'true') {
+            setEmailFailed(true);
+            localStorage.removeItem('otpEmailFailed');
         }
     }, [navigate]);
 
@@ -52,11 +59,12 @@ const OTPVerification = () => {
 
     const handleResend = async () => {
         setError('');
+        setSuccess('');
+        setEmailFailed(false);
         try {
-            // Assuming your backend has this endpoint
             const response = await API.post('/auth/resend-otp', { email });
             if (response.data.success) {
-                alert(response.data.message);
+                setSuccess('A new OTP has been sent to your email.');
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to resend OTP.');
@@ -77,6 +85,12 @@ const OTPVerification = () => {
                     <strong style={{ color: '#000' }}>{email}</strong>
                 </p>
                 
+                {emailFailed && (
+                    <p className="error-message" style={{ color: '#b8860b', background: '#fff8e1', border: '1px solid #f0c040', borderRadius: '8px', padding: '10px', marginBottom: '10px', textAlign: 'center' }}>
+                        ⚠️ Email delivery failed. Please click <strong>Resend OTP</strong> below to get your code.
+                    </p>
+                )}
+                {success && <p style={{ color: 'green', marginBottom: '10px', textAlign: 'center' }}>{success}</p>}
                 {error && <p className="error-message" style={{ color: 'red', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
 
                 <div className="form-group">
