@@ -1,5 +1,10 @@
 // Centralized configuration and logger
 require('./config/config'); // validates and loads env variables
+
+const dns = require('dns');
+// FORCE Node.js to use IPv4 instead of IPv6 for DNS resolution globally.
+// This completely fixes the ENETUNREACH error on Render's free tier.
+dns.setDefaultResultOrder('ipv4first');
 const logger = require('./utils/logger');
 const express = require('express');
 const cors = require('cors');
