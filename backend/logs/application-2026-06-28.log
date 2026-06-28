@@ -2,3 +2,9 @@
 {"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 19:09:30"}
 {"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 19:09:42"}
 {"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 19:09:54"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 19:33:59"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 22:48:04"}
+{"level":"info","message":"127.0.0.1 - - [28/Jun/2026:17:24:41 +0000] \"POST /api/auth/register HTTP/1.1\" 400 216 \"-\" \"curl/8.20.0\"","timestamp":"2026-06-28 22:54:41"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 22:54:51"}
+{"level":"info","message":"127.0.0.1 - - [28/Jun/2026:17:24:55 +0000] \"POST /api/auth/register HTTP/1.1\" 400 64 \"-\" \"-\"","timestamp":"2026-06-28 22:54:55"}
+{"level":"info","message":"Environment configuration loaded successfully","timestamp":"2026-06-28 23:04:55"}
