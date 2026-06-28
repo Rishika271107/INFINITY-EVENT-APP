@@ -14,11 +14,15 @@ const getTransporter = () => {
   }
 
   transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
       user: user,
       pass: pass,
     },
+    // Force IPv4 to prevent ENETUNREACH errors on Render's IPv6 network
+    family: 4,
     connectionTimeout: 30000,
     greetingTimeout: 30000,
     socketTimeout: 30000,
