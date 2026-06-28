@@ -10,7 +10,7 @@ const testSMTP = async () => {
     service: "gmail",
     auth: {
       user: process.env.EMAIL_USER.trim(),
-      pass: process.env.EMAIL_PASS.trim(),
+      pass: process.env.EMAIL_PASS.replace(/\s/g, ""),
     },
   });
 

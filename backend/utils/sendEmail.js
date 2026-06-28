@@ -1,5 +1,33 @@
 const nodemailer = require("nodemailer");
 
+// Initialize transporter globally to reuse the connection pool
+let transporter = null;
+
+const getTransporter = () => {
+  if (transporter) return transporter;
+  
+  const user = process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : "";
+  const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, "") : "";
+
+  if (!user || !pass) {
+    throw new Error("Missing EMAIL_USER or EMAIL_PASS in environment variables.");
+  }
+
+  transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: user,
+      pass: pass,
+    },
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
+    pool: true, // Enables connection pooling
+  });
+
+  return transporter;
+};
+
 /**
  * PRODUCTION-READY GMAIL SMTP
  * Using service: "gmail" for automated configuration and reliability.
@@ -12,24 +40,9 @@ const sendEmail = async (email, subject, text, otp = null) => {
   try {
     console.log(`\n📧 ATTEMPTING EMAIL DELIVERY...`);
     console.log(`   Recipient: ${email}`);
-
-    const user = process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : "";
-    const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.trim() : "";
-
-    if (!user || !pass) {
-      throw new Error("Missing EMAIL_USER or EMAIL_PASS in environment variables.");
-    }
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: user,
-        pass: pass,
-      },
-      connectionTimeout: 10000, // 10 seconds timeout
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
+    
+    const mailTransporter = getTransporter();
+    const user = process.env.EMAIL_USER.trim();
 
     const mailOptions = {
       from: `"Infinity Grand Events" <${user}>`,
@@ -63,7 +76,7 @@ const sendEmail = async (email, subject, text, otp = null) => {
       `,
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await mailTransporter.sendMail(mailOptions);
     console.log("✅ SUCCESS: Email sent successfully! Message ID:", info.messageId);
     return info;
 
