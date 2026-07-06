@@ -14,19 +14,13 @@ const getTransporter = () => {
   }
 
   transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // use SSL/TLS
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
+    secure: process.env.EMAIL_SECURE === "true",
     auth: {
-      user: user,
-      pass: pass,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
-    // Force IPv4 to prevent ENETUNREACH errors on Render's IPv6 network
-    family: 4,
-    connectionTimeout: 30000,
-    greetingTimeout: 30000,
-    socketTimeout: 30000,
-    pool: true, // Enables connection pooling
   });
 
   return transporter;
@@ -49,7 +43,7 @@ const sendEmail = async (email, subject, text, otp = null) => {
     const user = process.env.EMAIL_USER.trim();
 
     const mailOptions = {
-      from: `"Infinity Grand Events" <${user}>`,
+      from: process.env.EMAIL_FROM,
       to: email,
       subject: subject,
       text: text,
@@ -85,12 +79,11 @@ const sendEmail = async (email, subject, text, otp = null) => {
     return info;
 
   } catch (error) {
-    console.error("\n❌ GMAIL SMTP ERROR DETECTED");
+    console.error("\n❌ SMTP ERROR DETECTED");
     
-    if (error.response?.includes("535-5.7.8")) {
-      console.error("CRITICAL: Your Gmail credentials were REJECTED.");
-      console.error("REASON: This is usually because you're using a standard password instead of an APP PASSWORD.");
-      console.error("FIX: Generate a 16-character App Password in your Google Account settings.");
+    if (error.response?.includes("535-5.7.8") || error.response?.includes("535")) {
+      console.error("CRITICAL: Your SMTP credentials were REJECTED.");
+      console.error("FIX: Ensure your SMTP password (Brevo key) is correct.");
     } else {
       console.error("ERROR TYPE:", error.code || "UNKNOWN");
       console.error("MESSAGE:", error.message);
