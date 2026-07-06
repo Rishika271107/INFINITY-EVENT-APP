@@ -13,9 +13,14 @@ const getTransporter = () => {
     throw new Error("Missing EMAIL_USER or EMAIL_PASS in environment variables.");
   }
 
+  console.log("SMTP HOST:", process.env.EMAIL_HOST);
+  console.log("SMTP PORT:", process.env.EMAIL_PORT);
+  console.log("SMTP SECURE:", process.env.EMAIL_SECURE);
+  console.log("SMTP USER:", process.env.EMAIL_USER);
+
   transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT),
+    host: process.env.EMAIL_HOST || "smtp-relay.brevo.com",
+    port: Number(process.env.EMAIL_PORT || 587),
     secure: process.env.EMAIL_SECURE === "true",
     auth: {
       user: process.env.EMAIL_USER,
