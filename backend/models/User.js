@@ -29,8 +29,8 @@ const userSchema = new mongoose.Schema(
     failedLoginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date, default: null },
     lastLogin: { type: Date },
-    otp: { type: String },
-    otpExpiry: { type: Date }
+
+
   },
   {
     timestamps: true

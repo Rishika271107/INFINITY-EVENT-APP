@@ -6,11 +6,7 @@ const router = express.Router();
 // Controllers
 const {
   registerUser,
-  verifyOTP,
   loginUser,
-  resendOTP,
-  forgotPassword,
-  resetPassword,
   getUserProfile,
   updateUserProfile,
 } = require('../controllers/authController');
@@ -41,12 +37,10 @@ const { loginLimiter, registerLimiter, otpLimiter } = require('../middleware/rat
 
 // Routes – validation, rate limiting, and protection applied
 router.post('/register', registerLimiter, validate(registerSchema), asyncHandler(registerUser));
-router.post('/verify-otp', otpLimiter, validate(verifyOTPSchema), asyncHandler(verifyOTP));
 router.post('/login', loginLimiter, validate(loginSchema), asyncHandler(loginUser));
 
-router.post('/resend-otp', validate(resendOTPSchema), asyncHandler(resendOTP));
-router.post('/forgot-password', validate(forgotPasswordSchema), asyncHandler(forgotPassword));
-router.post('/reset-password', validate(resetPasswordSchema), asyncHandler(resetPassword));
+router.get('/me', protect, asyncHandler(getUserProfile));
+router.put('/profile', protect, asyncHandler(updateUserProfile));
 router.get('/me', protect, asyncHandler(getUserProfile));
 router.put('/profile', protect, asyncHandler(updateUserProfile));
 
