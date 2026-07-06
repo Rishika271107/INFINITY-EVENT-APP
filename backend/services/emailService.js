@@ -1,21 +1,30 @@
 const nodemailer = require('nodemailer');
 
 // Load env variables (ensure they are defined in .env)
-const GMAIL_USER = process.env.GMAIL_USER;
-const GMAIL_PASS = process.env.GMAIL_PASS;
+const MAILJET_SMTP_HOST = process.env.MAILJET_SMTP_HOST;
+const MAILJET_SMTP_PORT = Number(process.env.MAILJET_SMTP_PORT);
+const MAILJET_USER = process.env.MAILJET_API_KEY; // Mailjet uses API key as username
+const MAILJET_PASS = process.env.MAILJET_SECRET_KEY;
+const MAILJET_FROM = process.env.MAILJET_FROM;
 
-if (!GMAIL_USER || !GMAIL_PASS) {
-  throw new Error('GMAIL_USER and GMAIL_PASS must be set in environment variables');
+if (!MAILJET_SMTP_HOST || !MAILJET_SMTP_PORT || !MAILJET_USER || !MAILJET_PASS) {
+  throw new Error('Mailjet SMTP credentials must be set in environment variables');
 }
 
-// Create a reusable transport instance
+// Create a reusable transport instance for Mailjet
 const transport = nodemailer.createTransport({
-  service: 'gmail',
+  host: MAILJET_SMTP_HOST,
+  port: MAILJET_SMTP_PORT,
   auth: {
-    user: GMAIL_USER,
-    pass: GMAIL_PASS,
+    user: MAILJET_USER,
+    pass: MAILJET_PASS,
   },
+  secure: false, // TLS
+  requireTLS: true,
+  family: 4, // Force IPv4 to avoid ENETUNREACH on Render
 });
+
+// Gmail transport removed – using Mailjet (already defined above)
 
 /**
  * Send an email using the pre‑configured Gmail SMTP transport.
