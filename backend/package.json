@@ -42,6 +42,10 @@
     "xss-clean": "^0.1.4",
     "zod": "^3.22.4"
   },
+  "jest": {
+    "globalSetup": "./tests/setup.js",
+    "testTimeout": 30000
+  },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-plugin-jest": "^29.15.4",
@@ -49,9 +53,5 @@
     "mongodb-memory-server": "^9.0.0",
     "nodemon": "^3.1.0",
     "supertest": "^6.3.0"
-  },
-  "jest": {
-    "globalSetup": "./tests/setup.js",
-    "testTimeout": 30000
   }
 }
