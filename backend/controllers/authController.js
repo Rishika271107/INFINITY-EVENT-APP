@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const otpGenerator = require("otp-generator");
+
 const generateToken = require("../utils/generateToken");
 const sendEmail = require("../utils/sendEmail");
 
