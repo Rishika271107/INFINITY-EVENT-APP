@@ -43,9 +43,6 @@
   },
   "devDependencies": {
     "eslint": "^8.57.0",
-<<<<<<< HEAD
-    "nodemon": "^3.1.0"
-=======
     "eslint-plugin-jest": "^29.15.4",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^9.0.0",
@@ -55,6 +52,5 @@
   "jest": {
     "globalSetup": "./tests/setup.js",
     "testTimeout": 30000
->>>>>>> 3c3e585a8e78f4a0a30506aa25bf9d37cbae00c0
   }
 }
