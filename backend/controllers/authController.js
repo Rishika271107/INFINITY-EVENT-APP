@@ -2,8 +2,6 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 const generateToken = require("../utils/generateToken");
-const sendEmail = require("../utils/sendEmail");
-
 const logAuthEvent = (payload) => {
   console.log({
     ...payload,
@@ -40,8 +38,8 @@ exports.registerUser = async (req, res) => {
       if (user.isVerified) {
         return res.status(400).json({ message: "User already exists and is verified. Please login." });
       }
-      // If user exists but not verified, update them and send new OTP
-      console.log("User exists but not verified. Updating and resending OTP...");
+      // If user exists but not verified, update them
+      console.log("User exists but not verified. Updating...");
       const hashedPassword = await bcrypt.hash(password, 10);
       user.username = username;
       user.phone = phone;
@@ -58,7 +56,7 @@ exports.registerUser = async (req, res) => {
       console.log("NEW USER CREATED:", email);
     }
 
-    // Auto‑verify user (OTP removed)
+    // Auto‑verify user
     user.isVerified = true;
     await user.save();
 
@@ -176,18 +174,6 @@ exports.loginUser = async (req, res) => {
 
 
 
-
-// ─── VERIFY OTP ────────────────────────────────────────────
-// OTP verification removed
-
-// ─── RESEND OTP ────────────────────────────────────────────
-// Resend OTP endpoint removed
-
-// ─── FORGOT PASSWORD ───────────────────────────────────────
-// Forgot password (OTP) removed
-
-// ─── RESET PASSWORD ────────────────────────────────────────
-// Reset password (OTP) removed
 
 // ─── GET USER PROFILE ──────────────────────────────────────
 exports.getUserProfile = async (req, res) => {

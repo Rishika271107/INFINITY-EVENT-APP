@@ -22,14 +22,7 @@ function UserSignup() {
         password: data.password,
       });
       if (response.data?.success) {
-        localStorage.setItem("signupEmail", data.email);
-        if (response.data?.otpSent === false) {
-          // OTP saved in DB but email failed — still go to verify page so user can resend
-          localStorage.setItem("otpEmailFailed", "true");
-        } else {
-          localStorage.removeItem("otpEmailFailed");
-        }
-        navigate("/verify-otp");
+        navigate("/user/login", { state: { message: "Registration successful. Please log in." } });
       } else {
         setErrorMsg(response.data?.message || "Signup failed.");
       }

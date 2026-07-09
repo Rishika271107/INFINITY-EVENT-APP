@@ -13,11 +13,6 @@ const registerSchema = z.object({
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
 }).strict();
 
-// OTP verification schema
-const verifyOTPSchema = z.object({
-  email: z.string().email(),
-  otp: z.string().length(6, { message: 'OTP must be 6 digits' }),
-}).strict();
 
 // Login schema
 const loginSchema = z.object({
@@ -28,28 +23,9 @@ const loginSchema = z.object({
 // Admin login schema (same as user login but could be extended)
 const adminLoginSchema = loginSchema;
 
-// Resend OTP schema
-const resendOTPSchema = z.object({
-  email: z.string().email(),
-}).strict();
-
-// Forgot password schema
-const forgotPasswordSchema = z.object({
-  email: z.string().email(),
-}).strict();
-
-// Reset password schema
-const resetPasswordSchema = z.object({
-  token: z.string(),
-  newPassword: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-}).strict();
 
 module.exports = {
   registerSchema,
-  verifyOTPSchema,
   loginSchema,
   adminLoginSchema,
-  resendOTPSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
 };

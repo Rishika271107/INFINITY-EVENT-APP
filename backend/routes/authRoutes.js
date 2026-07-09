@@ -18,19 +18,15 @@ const asyncHandler = require('../utils/asyncHandler');
 const validate = require('../middleware/validate');
 const {
   registerSchema,
-  verifyOTPSchema,
   loginSchema,
   adminLoginSchema,
-  resendOTPSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
 } = require('../validationSchemas/authValidation');
 
 // Auth protection middleware
 const { protect, adminOnly } = require('../middleware/authMiddleware');
 
 // Rate limiting middleware
-const { loginLimiter, registerLimiter, otpLimiter } = require('../middleware/rateLimiter');
+const { loginLimiter, registerLimiter } = require('../middleware/rateLimiter');
 
 // Failed login lockout middleware
 
