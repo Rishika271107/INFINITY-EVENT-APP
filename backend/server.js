@@ -65,9 +65,17 @@ app.get('/', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
+    message: "API is healthy",
   });
 });
 
+// API Root endpoint
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Welcome to the Infinity Grand Events API",
+  });
+});
 
 // ROUTES
 app.use(
