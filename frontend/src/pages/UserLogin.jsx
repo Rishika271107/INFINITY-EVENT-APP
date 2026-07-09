@@ -53,11 +53,7 @@ function UserLogin() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <div className="forgot-password-link" style={{ textAlign: "right", marginTop: "10px" }}>
-              <button type="button" className="switch-text" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "0.9rem", color: "#d4af37", textDecoration: "underline" }} onClick={() => navigate("/forgot-password")}>
-                Forgot Password?
-              </button>
-            </div>
+
           </div>
           <button type="submit" className="auth-submit-btn" disabled={loading}>
             {loading ? "Logging in..." : "Confirm Details"}

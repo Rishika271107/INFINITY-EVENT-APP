@@ -14,7 +14,7 @@ const UserSignup = lazy(() => import('./pages/UserSignup'));
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+
 const BudgetTracker = lazy(() => import('./pages/BudgetTracker'));
 const PastActivities = lazy(() => import('./pages/PastActivities'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -38,7 +38,7 @@ const MakeupConfirm = lazy(() => import('./pages/MakeupConfirm'));
 const DecorationDetails = lazy(() => import('./pages/DecorationDetails'));
 const DecorationVendors = lazy(() => import('./pages/DecorationVendors'));
 const DecorationBooking = lazy(() => import('./pages/DecorationBooking'));
-const OTPVerification = lazy(() => import('./pages/OTPVerification'));
+
 const BookingSuccess = lazy(() => import('./pages/BookingSuccess'));
 const AiHelp = lazy(() => import('./pages/AiHelp'));
 
@@ -53,8 +53,8 @@ function App() {
             <Route path="/role-selection" element={<RoleSelection />} />
             <Route path="/user/login" element={<UserLogin />} />
             <Route path="/user/signup" element={<UserSignup />} />
-            <Route path="/verify-otp" element={<OTPVerification />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+
+
 
             {/* Admin */}
             <Route path="/admin-login" element={<AdminLogin />} />
