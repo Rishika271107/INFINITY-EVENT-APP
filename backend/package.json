@@ -10,6 +10,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "lint": "eslint . -c .eslintrc.json",
+    "test": "jest --runInBand",
     "seed": "node scripts/seedUsers.js",
     "unblock-admin": "node scripts/unblockAdmin.js"
   },
