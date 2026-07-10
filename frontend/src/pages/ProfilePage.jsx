@@ -98,38 +98,12 @@ function ProfilePage() {
   }, []);
 
   const stats = [
-    { id: 1, label: "Events Attended", value: "24", icon: <Calendar size={22} /> },
-    { id: 2, label: "Years With Us", value: "8", icon: <Star size={22} /> },
-    { id: 3, label: "Profile Completed", value: "100%", icon: <ShieldCheck size={22} /> },
+    { id: 1, label: "Events Attended", value: "0", icon: <Calendar size={22} /> },
+    { id: 2, label: "Years With Us", value: "0", icon: <Star size={22} /> },
+    { id: 3, label: "Profile Completed", value: user?.phone ? "100%" : "80%", icon: <ShieldCheck size={22} /> },
   ];
 
-  const recentActivity = [
-    {
-      id: 1,
-      title: "Booking Confirmed",
-      description: "Sunburn Arena 2025",
-      time: "2h ago",
-      icon: <Ticket size={20} />,
-      color: "#d4af37"
-    },
-    {
-      id: 2,
-      title: "Payment Successful",
-      description: "Paid ₹ 8,999 via Razorpay",
-      time: "5h ago",
-      icon: <CreditCard size={20} />,
-      color: "#d4af37"
-    },
-
-    {
-      id: 3,
-      title: "Reminder Set",
-      description: "Sunburn Arena 2025",
-      time: "2d ago",
-      icon: <Bell size={20} />,
-      color: "#d4af37"
-    }
-  ];
+  const recentActivity = [];
 
   return (
     <div className="profile-page-content">
@@ -182,13 +156,13 @@ function ProfilePage() {
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid #d4af37', color: '#fff', borderRadius: '4px', padding: '4px 8px', marginBottom: '8px', fontSize: '1.2rem' }}
               />
             ) : (
-              <h2>{user?.username || "ARJUN PATEL"}</h2>
+              <h2>{user?.username || "Guest"}</h2>
             )}
 
             <div className="contact-info">
               <div className="info-item">
                 <Mail size={16} />
-                <span>{user?.email || "arjun@example.com"}</span>
+                <span>{user?.email || "No email"}</span>
               </div>
               <div className="info-item">
                 <Phone size={16} />
@@ -200,7 +174,7 @@ function ProfilePage() {
                     style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid #d4af37', color: '#fff', borderRadius: '4px', padding: '2px 4px', fontSize: '0.9rem' }}
                   />
                 ) : (
-                  <span>{user?.phone || "+91 98765 43210"}</span>
+                  <span>{user?.phone || "No phone"}</span>
                 )}
               </div>
               <div className="info-item">
@@ -253,20 +227,26 @@ function ProfilePage() {
           </div>
 
           <div className="activity-list">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="activity-item">
-                <div className="activity-icon-container">
-                  {activity.icon}
+            {recentActivity.length > 0 ? (
+              recentActivity.map((activity) => (
+                <div key={activity.id} className="activity-item">
+                  <div className="activity-icon-container">
+                    {activity.icon}
+                  </div>
+                  <div className="activity-text">
+                    <h4>{activity.title}</h4>
+                    <p>{activity.description}</p>
+                  </div>
+                  <div className="activity-time">
+                    {activity.time}
+                  </div>
                 </div>
-                <div className="activity-text">
-                  <h4>{activity.title}</h4>
-                  <p>{activity.description}</p>
-                </div>
-                <div className="activity-time">
-                  {activity.time}
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p style={{ color: "rgba(255, 255, 255, 0.5)", textAlign: "center", padding: "20px 0" }}>
+                No recent activity found.
+              </p>
+            )}
           </div>
         </div>
       </section>
