@@ -22,6 +22,7 @@ function UserSignup() {
         password: data.password,
       });
       if (response.data?.success) {
+        window.alert("Registration successful. Please log in.");
         navigate("/user/login", { state: { message: "Registration successful. Please log in." } });
       } else {
         setErrorMsg(response.data?.message || "Signup failed.");
