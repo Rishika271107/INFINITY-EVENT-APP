@@ -51,7 +51,9 @@
     "supertest": "^6.3.0"
   },
   "jest": {
-    "globalSetup": "./tests/setup.js",
+    "setupFilesAfterEnv": [
+      "./tests/setupTests.js"
+    ],
     "testTimeout": 30000
   }
 }
