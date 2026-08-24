@@ -37,7 +37,5 @@ router.post('/login', loginLimiter, validate(loginSchema), asyncHandler(loginUse
 
 router.get('/me', protect, asyncHandler(getUserProfile));
 router.put('/profile', protect, asyncHandler(updateUserProfile));
-router.get('/me', protect, asyncHandler(getUserProfile));
-router.put('/profile', protect, asyncHandler(updateUserProfile));
 
 module.exports = router;
