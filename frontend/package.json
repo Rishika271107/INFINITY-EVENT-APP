@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "test": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -37,5 +37,8 @@
     "msw": "^2.14.6",
     "vite": "^8.0.10",
     "vitest": "^4.1.7"
+  },
+  "vitest": {
+    "passWithNoTests": true
   }
 }
