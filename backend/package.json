@@ -54,6 +54,8 @@
     "setupFilesAfterEnv": [
       "./tests/setupTests.js"
     ],
-    "testTimeout": 30000
+    "testTimeout": 30000,
+    "testPathIgnorePatterns": ["/node_modules/"],
+    "passWithNoTests": true
   }
 }
