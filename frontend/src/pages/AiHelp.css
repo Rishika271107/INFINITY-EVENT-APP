@@ -413,3 +413,33 @@
 @keyframes shineText {
   to { background-position: 200% center; }
 }
+
+/* Spinning icon while LLM is processing */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.send-btn .spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Disabled state for send button and suggestion chips */
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.suggestion-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Error bubble style for AI error messages */
+.message-bubble.error-bubble {
+  background: rgba(220, 50, 50, 0.12);
+  border-color: rgba(220, 50, 50, 0.3);
+  color: #ff7a7a;
+}

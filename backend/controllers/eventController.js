@@ -48,6 +48,11 @@ exports.createEvent = async (
       createdBy: req.user._id
     });
 
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('new_event_created', { title: event.title, _id: event._id });
+    }
+
     res.status(201).json({
       success: true,
       event

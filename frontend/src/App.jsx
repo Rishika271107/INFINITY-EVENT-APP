@@ -1,5 +1,6 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { io } from 'socket.io-client';
 import ErrorBoundary from './components/ErrorBoundary';
 import SkeletonLoader from './components/async/SkeletonLoader';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -43,6 +44,20 @@ const BookingSuccess = lazy(() => import('./pages/BookingSuccess'));
 const AiHelp = lazy(() => import('./pages/AiHelp'));
 
 function App() {
+  useEffect(() => {
+    // Connect to WebSocket server
+    const socket = io(import.meta.env.VITE_API_URL || "http://localhost:5000");
+
+    socket.on('new_event_created', (data) => {
+      // Very simple real-time notification
+      alert(`🎉 New Event Created: ${data.title}!`);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <ErrorBoundary>

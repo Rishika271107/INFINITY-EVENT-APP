@@ -1,150 +1,166 @@
-import React, { useState, useEffect, useRef } from "react";
+/**
+ * AiHelp.jsx
+ *
+ * Concept: LLM API Integration + Async data fetching from API
+ * This component sends user messages to the backend, which calls Google Gemini.
+ * The response is a structured JSON object { reply, suggestions } parsed from the LLM.
+ *
+ * Concept: State management with useState
+ * - messages: conversation history rendered in the chat UI
+ * - input: controlled input field
+ * - isTyping: shows typing indicator while awaiting LLM response
+ * - suggestions: dynamic follow-up chips returned by the LLM (structured output)
+ * - history: conversation history sent to backend for multi-turn context
+ *
+ * Concept: Side effects with useEffect
+ * - Auto-scroll to the latest message whenever messages/isTyping changes
+ *
+ * Concept: React component composition
+ * - This page is wrapped by UserLayout (Navbar + outlet) and ProtectedRoute
+ */
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Send, User, ArrowLeft, Palette, Shirt, Heart, DollarSign } from "lucide-react";
+import { Send, User, ArrowLeft, Palette, Shirt, Heart, DollarSign, Sparkles } from "lucide-react";
+import API from "../services/api";
 import "./AiHelp.css";
+
+// ── Default suggestion chips shown on first load ──────────────────────────────
+const DEFAULT_SUGGESTIONS = [
+  { label: "Venue Decor",      icon: Heart,       prompt: "Can you help me with venue decor?" },
+  { label: "Reception Colors", icon: Palette,     prompt: "Suggest reception color palettes" },
+  { label: "Saree Styling",    icon: Shirt,       prompt: "Suggest saree colors for an evening event" },
+  { label: "Budget Advice",    icon: DollarSign,  prompt: "Help me plan my event budget" },
+];
 
 const AiHelp = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
-  
-  // ─── STATE ───
+
+  // ── State management with useState ─────────────────────────────────────────
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: "ai",
       text: "Good evening. Welcome to Infinity Grand Events. I am Tara, your personal AI event director.\n\nIt would be my absolute pleasure to assist you in orchestrating a celebration that is nothing short of extraordinary. What kind of event are we planning today?",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  
-  // ─── CONVERSATION MEMORY ───
-  const [session, setSession] = useState({
-    eventType: null,
-    culture: null,
-    outfit: null,
-    timing: null,
-    style: null,
-    color: null,
-    venue: null,
-  });
+  const [error, setError] = useState(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // Structured output from LLM — suggestion chips update dynamically per response
+  const [suggestions, setSuggestions] = useState(DEFAULT_SUGGESTIONS);
 
+  // Conversation history for multi-turn LLM context
+  // Each turn: { role: 'user' | 'model', text: string }
+  const [history, setHistory] = useState([]);
+
+  // ── Side effects with useEffect — auto-scroll ──────────────────────────────
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // ─── STRICT INTENT-BASED ENGINE ───
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Concept: Async data fetching from API + async/await + Promises
+  //
+  // handleSend is an async function that:
+  //   1. Optimistically adds the user message to UI (synchronous state update)
+  //   2. Shows the typing indicator (state update)
+  //   3. Awaits the backend call which calls Gemini (async — Promise)
+  //   4. Parses the structured output { reply, suggestions }
+  //   5. Updates messages and suggestion chips
+  //
+  // Concept: JavaScript — async/await
+  // `await API.post(...)` pauses this async function until the Promise resolves,
+  // then execution continues on the next line — without blocking the UI thread.
+  // ─────────────────────────────────────────────────────────────────────────────
+  const handleSend = useCallback(async (textToSend = input) => {
+    const trimmed = textToSend.trim();
+    if (!trimmed || isTyping) return;
 
-  const detectIntent = (text) => {
-    const t = text.toLowerCase();
+    setError(null);
 
-    if (t.match(/^(hi|hello|hey|good morning|good evening)/)) return "GREETING";
-    if (t.includes("how are you")) return "SOCIAL";
-    if (t.includes("thank you")) return "APPRECIATION";
-    
-    if (t.includes("venue decor") || t.includes("decoration") || t.includes("decor ideas")) return "VENUE_DECOR";
-    if (t.includes("color") || t.includes("palette") || t.includes("shades")) return "COLORS";
-    if (t.includes("saree") || (t.includes("outfit") && t.includes("style"))) return "SAREE_STYLING";
-    if (t.includes("fashion") || t.includes("style")) return "FASHION";
-    if (t.includes("budget") || t.includes("cost") || t.includes("planning budget")) return "BUDGET";
-    if (t.includes("wedding planning")) return "WEDDING_PLANNING";
-    if (t.includes("confused") || t.includes("stressed")) return "EMOTIONAL_SUPPORT";
-    if (t.includes("photography")) return "PHOTOGRAPHY";
-    if (t.includes("catering") || t.includes("food")) return "CATERING";
-    if (t.includes("entertainment") || t.includes("music")) return "ENTERTAINMENT";
-
-    return "GENERAL";
-  };
-
-  const generateResponse = (userInput) => {
-    const intent = detectIntent(userInput);
-    const t = userInput.toLowerCase();
-    
-    // Update session info silently if detected
-    const newSession = { ...session };
-    if (t.includes("saree")) newSession.outfit = "saree";
-    if (t.includes("evening")) newSession.timing = "evening";
-    if (t.includes("soft-glam") || t.includes("soft glam")) newSession.style = "soft-glam";
-    if (t.includes("emerald")) newSession.color = "emerald green";
-    setSession(newSession);
-
-    // ─── RELEVANT RESPONSES ONLY ───
-
-    switch (intent) {
-      case "GREETING":
-        if (t.includes("hi")) return "Hello and welcome. I’m Tara, your personal AI event consultant. What kind of celebration are you planning today?";
-        if (t.includes("hello")) return "Good to see you. I’d be delighted to help you plan something memorable. Are you organizing a wedding, reception, engagement, birthday, or another special event?";
-        return "Hey there. I’m excited to help you create a beautiful event experience. What are we planning today?";
-
-      case "SOCIAL":
-        return "I’m doing wonderfully and ready to help you plan every detail perfectly. How may I assist you today?";
-
-      case "APPRECIATION":
-        return "It’s my pleasure. I’m always here to help make your celebration extraordinary.";
-
-      case "VENUE_DECOR":
-        return `Absolutely. I’d be delighted to help you design a beautiful venue atmosphere.\n\nTo recommend decor concepts that perfectly suit your event, could you tell me:\n• Is the venue indoor or outdoor?\n• Daytime or evening event?\n• Traditional elegance or modern luxury style?\n• Approximate guest count?\n\nMeanwhile, here are a few premium decor directions:\n\n**Modern Luxury:**\n• White floral installations, Champagne gold accents, and warm ambient lighting.\n\n**Royal Traditional:**\n• Grand floral entrances, Candle-lit pathways, and Crystal chandeliers.\n\n**Garden Elegance:**\n• Hanging floral decor, Fairy lights, and soft pastel palettes.`;
-
-      case "COLORS":
-        return `For an elegant reception atmosphere, these premium color combinations work beautifully:\n\n• **Emerald Green + Champagne Gold**\n• **Wine Red + Ivory**\n• **Royal Blue + Silver**\n• **Mauve + Rose Gold**\n\nThese shades create a luxurious ambiance, especially under warm evening lighting.\n\nWould you also like matching stage decor ideas, outfit coordination, or floral styling?`;
-
-      case "SAREE_STYLING":
-        return `For evening events, rich jewel tones and elegant soft-glam palettes work beautifully in sarees.\n\nSome stunning options include:\n• **Emerald Green** (luxurious & sophisticated)\n• **Wine Red** (rich & elegant)\n• **Midnight Blue** (modern & refined)\n• **Mauve Rose** (soft-glam aesthetic)\n\nTo complement the look, I recommend antique gold jewelry and a sleek hairstyle. Would you like matching makeup or footwear ideas?`;
-
-      case "BUDGET":
-        return `I can absolutely help you organize the event budget professionally. \n\nTo prepare a structured breakdown, could you share:\n• Event type?\n• Approximate guest count?\n• Luxury or minimal style preference?\n\nI’ll then create a detailed budget roadmap for you.`;
-
-      case "WEDDING_PLANNING":
-        return `Planning a wedding is a beautiful journey. To help you orchestrate every ceremony professionally, could you tell me which regional tradition you are following (e.g., Hindu, Muslim, Christian)? I can then guide you through Mehendi, Haldi, Mandap decor, and timelines.`;
-
-      case "EMOTIONAL_SUPPORT":
-        return `That’s completely understandable. Planning an important celebration involves many decisions, and it can sometimes feel overwhelming. Don’t worry — I’ll help simplify everything step-by-step.\n\nWould you like to start with theme selection, color combinations, or budget organization?`;
-
-      case "GENERAL":
-        if (t.includes("modern luxury decor")) {
-          return `A modern luxury atmosphere would pair beautifully with your styling. I recommend warm ambient lighting, white floral installations, gold metallic accents, and minimal elegant stage design. This creates a refined high-end atmosphere.`;
-        }
-        return `I’d love to assist you with that! To give you a truly professional recommendation, could you tell me a bit more about the vibe you're envisioning or the specific event type?`;
-
-      default:
-        return "I'm here to help you plan your dream event. What specific area can I assist you with right now—decor, styling, budget, or themes?";
-    }
-  };
-
-  const handleSend = (textToSend = input) => {
-    if (!textToSend.trim()) return;
-
+    // 1. Add user message to UI (optimistic update)
     const userMsg = {
       id: Date.now(),
       sender: "user",
-      text: textToSend,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      text: trimmed,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const responseText = generateResponse(textToSend);
-      const taraMsg = {
+    // Build updated history to send to backend (multi-turn context)
+    const updatedHistory = [...history, { role: "user", text: trimmed }];
+
+    try {
+      // 2. Async API call — POST /api/ai/chat
+      // Backend calls Gemini with the system prompt + history + new message
+      const response = await API.post("/ai/chat", {
+        message: trimmed,
+        history: updatedHistory.slice(-10), // send last 10 turns to avoid token overflow
+      });
+
+      // 3. Consume the structured output from the LLM
+      // Backend guarantees shape: { success: true, data: { reply: string, suggestions: string[] } }
+      const { reply, suggestions: newSuggestions } = response.data.data;
+
+      // 4. Add AI reply to chat
+      const aiMsg = {
         id: Date.now() + 1,
         sender: "ai",
-        text: responseText,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        text: reply,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
-      setMessages((prev) => [...prev, taraMsg]);
+      setMessages((prev) => [...prev, aiMsg]);
+
+      // 5. Update history for the next turn (multi-turn context memory)
+      setHistory([
+        ...updatedHistory,
+        { role: "model", text: reply },
+      ]);
+
+      // 6. Update suggestion chips from structured LLM output
+      if (Array.isArray(newSuggestions) && newSuggestions.length > 0) {
+        setSuggestions(
+          newSuggestions.slice(0, 4).map((label, i) => ({
+            label,
+            icon: [Heart, Palette, Shirt, DollarSign][i % 4],
+            prompt: label,
+          }))
+        );
+      }
+
+    } catch (err) {
+      // Server-side error handling — display user-friendly error in chat
+      const errMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "I'm having trouble connecting right now. Please try again in a moment.";
+
+      setError(errMsg);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 2,
+          sender: "ai",
+          text: `⚠️ ${errMsg}`,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          isError: true,
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
-  };
+    }
+  }, [input, isTyping, history]);
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleSend();
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   return (
@@ -157,8 +173,8 @@ const AiHelp = () => {
         <div className="ai-title">
           <div className="Zyra-avatar-header">T</div>
           <div className="title-text">
-            <h1>Zyra</h1>
-            <p>Infinity AI Event Director</p>
+            <h1>Tara</h1>
+            <p>Infinity AI Event Director · Powered by Gemini</p>
           </div>
         </div>
         <div className="header-status">
@@ -172,11 +188,15 @@ const AiHelp = () => {
           {messages.map((msg) => (
             <div key={msg.id} className={`message-wrapper ${msg.sender}`}>
               <div className="message-icon">
-                {msg.sender === "ai" ? <div className="tara-icon-inner">T</div> : <User size={18} />}
+                {msg.sender === "ai" ? (
+                  <div className="tara-icon-inner">T</div>
+                ) : (
+                  <User size={18} />
+                )}
               </div>
               <div className="message-content">
-                <div className="message-bubble">
-                  {msg.text.split('\n').map((line, i) => (
+                <div className={`message-bubble${msg.isError ? " error-bubble" : ""}`}>
+                  {msg.text.split("\n").map((line, i) => (
                     <React.Fragment key={i}>
                       {line}
                       <br />
@@ -187,9 +207,12 @@ const AiHelp = () => {
               </div>
             </div>
           ))}
+
           {isTyping && (
             <div className="message-wrapper ai">
-              <div className="message-icon"><div className="tara-icon-inner">T</div></div>
+              <div className="message-icon">
+                <div className="tara-icon-inner">T</div>
+              </div>
               <div className="message-content">
                 <div className="message-bubble typing">
                   <span className="dot"></span>
@@ -202,19 +225,22 @@ const AiHelp = () => {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Dynamic suggestion chips — updated from structured LLM output */}
         <div className="suggestions-bar">
-          <button className="suggestion-chip" onClick={() => handleSend("Can you help me with venue decor?")}>
-            <Heart size={14} /> Venue Decor
-          </button>
-          <button className="suggestion-chip" onClick={() => handleSend("Suggest reception colors")}>
-            <Palette size={14} /> Reception Colors
-          </button>
-          <button className="suggestion-chip" onClick={() => handleSend("Suggest saree colors")}>
-            <Shirt size={14} /> Saree Styling
-          </button>
-          <button className="suggestion-chip" onClick={() => handleSend("Budget planning")}>
-            <DollarSign size={14} /> Budget Advice
-          </button>
+          {suggestions.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <button
+                key={i}
+                className="suggestion-chip"
+                onClick={() => handleSend(s.prompt)}
+                disabled={isTyping}
+              >
+                <Icon size={14} />
+                {s.label}
+              </button>
+            );
+          })}
         </div>
       </main>
 
@@ -226,9 +252,14 @@ const AiHelp = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
+            disabled={isTyping}
           />
-          <button className="send-btn" onClick={() => handleSend()}>
-            <Send size={20} />
+          <button
+            className="send-btn"
+            onClick={() => handleSend()}
+            disabled={isTyping || !input.trim()}
+          >
+            {isTyping ? <Sparkles size={20} className="spin" /> : <Send size={20} />}
           </button>
         </div>
       </footer>

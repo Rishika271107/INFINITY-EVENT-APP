@@ -113,6 +113,11 @@ app.use("/api/reminders",
   require("./routes/reminderRoutes")
 );
 
+// AI routes — LLM API integration (Gemini)
+app.use("/api/ai",
+  require("./routes/aiRoutes")
+);
+
 app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -128,14 +133,12 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Error handling middleware (must be after all routes)
-app.use((err, req, res, next) => {
-  console.error("GLOBAL ERROR:", err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-  });
-});
+// ─── Centralized Error Handling Middleware ────────────────────────────────
+// Concept: Server-side error handling + Middleware
+// errorMiddleware must be registered AFTER all routes so it catches errors
+// forwarded via next(err) from any route handler or asyncHandler.
+const { errorHandler } = require('./middleware/errorMiddleware');
+app.use(errorHandler);
 
 
 
@@ -146,6 +149,22 @@ function startServer(port, attempt = 1) {
   return new Promise((resolve, reject) => {
     const server = app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on port ${port}`);
+      
+      const io = require('socket.io')(server, {
+        cors: {
+          origin: "*",
+          methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+        }
+      });
+      app.set('io', io);
+      
+      io.on('connection', (socket) => {
+        console.log(`New WebSocket client connected: ${socket.id}`);
+        socket.on('disconnect', () => {
+          console.log(`WebSocket client disconnected: ${socket.id}`);
+        });
+      });
+
       resolve(server);
     });
 
